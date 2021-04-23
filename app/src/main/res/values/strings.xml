@@ -5,6 +5,9 @@
     <string name="LoginBtn">Login</string>
     <string name="GoToDatabase">To database</string>
     <string name="DBase_welcome">Database management screen</string>
+    <string name="DBase_test_welcome">Test database management screen</string>
+    <string name="Antibodies">Antibodies detected</string>
+    <string name="ToTests">To tests</string>
     <string name="IDNPNumber">IDNP</string>
     <string name="vacc">Vaccine name (optional for adding)</string>
     <string name="title_activity_logged_in_2nd">Logged_in_2nd</string>
@@ -18,6 +21,11 @@
     <string name="vaccinate_button">Vacc</string>
     <string name="date">Date of vaccination</string>
     <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_gallery">Vaccinations</string>
+    <string name="menu_tests">Tests</string>
+    <string name="db_test_result">Test result</string>
+    <string name="db_test_date">Test date</string>
+    <string name="back">Back</string>
+    <string name="GREEN">#9BE128</string>
+    <string name="RED">#DF2D1E</string>
 </resources>
