@@ -3,16 +3,16 @@ package com.example.sqliteapp.database
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.sqliteapp.adapters.CustomTestModelAdapter
 import com.example.sqliteapp.databinding.DatabaseTestManagementScreenBinding
 import com.example.sqliteapp.models.TestModel
 
 open class DatabaseTestActivity : AppCompatActivity() {
     private lateinit var mBinding: DatabaseTestManagementScreenBinding
-    protected val binding get() = mBinding
+    private val binding get() = mBinding
     private val idnpLength = 13
-    private var personArrayAdapter: ArrayAdapter<*>? = null
     private var databaseHelper: DatabaseHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,25 +50,12 @@ open class DatabaseTestActivity : AppCompatActivity() {
             ).show()
             showCustomersOnList(databaseHelper)
         })
-        binding.databaseListView.onItemClickListener = OnItemClickListener { parent, _, position, _ ->
-            val clickedPerson = parent.getItemAtPosition(position) as TestModel
-            databaseHelper!!.deleteTest(clickedPerson)
-            showCustomersOnList(databaseHelper!!)
-            Toast.makeText(
-                    this@DatabaseTestActivity,
-                    "Deleted $clickedPerson",
-                    Toast.LENGTH_SHORT
-            ).show()
-        }
+
     }
 
     private fun showCustomersOnList(databaseHelper2: DatabaseHelper) {
-        personArrayAdapter = ArrayAdapter(
-                this@DatabaseTestActivity,
-                android.R.layout.simple_list_item_1,
-                databaseHelper2.allTests
-        )
-        binding.databaseListView.adapter = personArrayAdapter
+        binding.testRecycler.adapter = CustomTestModelAdapter(databaseHelper2.allTests, databaseHelper2)
+        binding.testRecycler.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }
 
     private fun checkFields(): Boolean {

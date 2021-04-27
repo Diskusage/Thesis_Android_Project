@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.sqliteapp.ui.home.HomeFragment"
+        android:name="com.example.sqliteapp.ui.home.ProfileFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/nav_tests"
@@ -18,9 +18,9 @@
         tools:layout="@layout/fragment_tests" />
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.example.sqliteapp.ui.gallery.GalleryFragment"
+        android:name="com.example.sqliteapp.ui.gallery.VaccinationsFragment"
         android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_vaccinations" />
 
 
 </navigation>

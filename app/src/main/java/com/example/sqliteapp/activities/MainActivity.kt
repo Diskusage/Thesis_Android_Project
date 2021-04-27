@@ -13,7 +13,7 @@ import com.example.sqliteapp.models.PersonModel
 open class MainActivity : AppCompatActivity() {
     //references to layout controls
     private lateinit var mBinding: ActivityMainBinding
-    protected val binding get() = mBinding
+    private val binding get() = mBinding
     private var databaseHelper: DatabaseHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,18 +34,34 @@ open class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "Please fill all the fields.", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
             }
-            if (databaseHelper!!.checkLogin(
+            if (databaseHelper?.checkLogin(
                             PersonModel(binding.etFirstName.text.toString(),
                                     binding.etSecondName.text.toString(),
-                                    binding.etIDNP.text.toString()))
+                                    binding.etIDNP.text.toString())) == true
             ) {
                 val intent = Intent(this@MainActivity, LoggedInSecond::class.java)
-                val toPut = databaseHelper!!.getFromDb(binding.etIDNP.text.toString())
-                val backGround = databaseHelper!!.getLastTestResult(binding.etIDNP.text.toString())
-                backGround?.let { intent.putExtra("Background", backGround) }
-                intent.putExtra("VaccinationType", toPut[0])
-                intent.putExtra("VaccinationDate", toPut[1])
-                intent.putExtra("IDNP", toPut[2])
+                val backGround = databaseHelper?.getLastTestResult(binding.etIDNP.text.toString())
+                val toPut = databaseHelper?.getFromDb(mBinding.etIDNP.text.toString())
+                if (toPut == null && backGround != null){
+                    val toPutTest = databaseHelper!!.getTestFromDb(mBinding.etIDNP.text.toString())
+                    intent.putExtra("Background", backGround)
+                    intent.putExtra("IDNP", toPutTest?.idnp)
+                    intent.putExtra("FName", binding.etFirstName.text.toString())
+                    intent.putExtra("SName", binding.etSecondName.text.toString())
+                } else if (toPut != null && backGround == null){
+                    intent.putExtra("VaccinationType", toPut.type.toString())
+                    intent.putExtra("VaccinationDate", toPut.vaccDate)
+                    intent.putExtra("IDNP", toPut.iDNP)
+                    intent.putExtra("FName", toPut.firstName)
+                    intent.putExtra("SName", toPut.secondName)
+                } else if (toPut != null && backGround != null){
+                    intent.putExtra("VaccinationType", toPut.type)
+                    intent.putExtra("VaccinationDate", toPut.vaccDate)
+                    intent.putExtra("IDNP", toPut.iDNP)
+                    intent.putExtra("FName", toPut.firstName)
+                    intent.putExtra("SName", toPut.secondName)
+                    intent.putExtra("Background", backGround)
+                }
                 startActivity(intent)
             } else {
                 Toast.makeText(this@MainActivity, "No account found", Toast.LENGTH_SHORT).show()

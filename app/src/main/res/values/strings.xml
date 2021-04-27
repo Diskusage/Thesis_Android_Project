@@ -28,4 +28,7 @@
     <string name="back">Back</string>
     <string name="GREEN">#9BE128</string>
     <string name="RED">#DF2D1E</string>
+    <string name="STANDARD">#FAFAFA</string>
+    <string name="delete">Delete</string>
+    <string name="generate">Generate</string>
 </resources>

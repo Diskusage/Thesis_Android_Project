@@ -1,16 +1,19 @@
-package com.example.sqliteapp.database
+package com.example.sqliteapp.adapters
 
 import android.graphics.Bitmap
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
 
-class MyEncoder : BarcodeEncoder() {
+class MyQrCodeEncoder : BarcodeEncoder() {
     //    private static final int WHITE = 0xFFFFFFFF;
-    fun createBitmap(matrix: BitMatrix, testResult: Boolean): Bitmap {
-        val white: Int = if (testResult) {
+    fun createBitmap(matrix: BitMatrix, testResult: Boolean?): Bitmap {
+        var white: Int = if (testResult == true) {
             0xDF2D1E
         } else {
             0x9BE128
+        }
+        if (testResult == null){
+            white = 0xFFFFFFFF.toInt()
         }
         val width = matrix.width
         val height = matrix.height

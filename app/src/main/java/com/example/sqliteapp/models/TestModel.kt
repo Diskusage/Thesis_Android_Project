@@ -4,7 +4,9 @@ class TestModel(var idnp: String?, var testResult: Boolean, var testDate: String
     var isAntibodies = antibodies
 
     override fun toString(): String {
-        return "$idnp $testDate ${if (testResult) "Positive" else "Negative"}" +
-                " ${if (isAntibodies) "Antibodies present" else "Antibodies absent"}"
+        return "IDNP: $idnp\n" +
+                "Test date: $testDate\n" +
+                "Test result: ${if (testResult) "Positive" else "Negative"}\n" +
+                "Antibodies: ${if (isAntibodies) "Present" else "Absent"}"
     }
 }

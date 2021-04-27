@@ -11,8 +11,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.example.sqliteapp.R
 import com.example.sqliteapp.databinding.ActivityLoggedIn2ndBinding
-import com.example.sqliteapp.ui.gallery.GalleryViewModel
-import com.example.sqliteapp.ui.home.HomeViewModel
+import com.example.sqliteapp.ui.gallery.VaccinationsViewModel
+import com.example.sqliteapp.ui.home.ProfileViewModel
 import com.example.sqliteapp.ui.tests.TestsViewModel
 
 
@@ -20,23 +20,15 @@ open class LoggedInSecond : AppCompatActivity() {
     private var mAppBarConfiguration: AppBarConfiguration? = null
     private var extras: Bundle? = null
     private lateinit var fBinding: ActivityLoggedIn2ndBinding
-    protected val binding get() = fBinding
-    private var homeViewModel: HomeViewModel ?= null
-    private var galleryViewModel: GalleryViewModel ?= null
+    private val binding get() = fBinding
+    private var profileViewModel: ProfileViewModel ?= null
+    private var vaccinationsViewModel: VaccinationsViewModel ?= null
     private var testsViewModel: TestsViewModel ?= null
     private var backGroundRed: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fBinding = ActivityLoggedIn2ndBinding.inflate(this.layoutInflater)
-        val view = fBinding.root
-        setContentView(view)
-        val intent = intent
-        extras = intent.extras
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        galleryViewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
-        testsViewModel = ViewModelProvider(this).get(TestsViewModel::class.java)
-
         setSupportActionBar(binding.appBarMain.toolbar)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -52,17 +44,27 @@ open class LoggedInSecond : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        val intent = intent
+        extras = intent.extras
+        profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+        vaccinationsViewModel = ViewModelProvider(this).get(VaccinationsViewModel::class.java)
+        testsViewModel = ViewModelProvider(this).get(TestsViewModel::class.java)
         val view = fBinding.root
-        backGroundRed = if (extras?.getBoolean("Background") == true){
+        setContentView(view)
+        backGroundRed = if (extras?.get("Background") == true){
             view.setBackgroundColor(Color.parseColor(getString(R.string.RED)))
             true
         } else {
             view.setBackgroundColor(Color.parseColor(getString(R.string.GREEN)))
             false
         }
+        if (extras?.get("Background") == null){
+            view.setBackgroundColor(Color.parseColor(getString(R.string.STANDARD)))
+        }
+
         testsViewModel?.initList(extras, backGroundRed)
-        galleryViewModel?.initList(extras, backGroundRed)
-        homeViewModel?.generateQrCodes(extras)
+        vaccinationsViewModel?.initList(extras, backGroundRed)
+        profileViewModel?.generateQrCodes(extras)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

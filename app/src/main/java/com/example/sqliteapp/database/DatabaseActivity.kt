@@ -6,12 +6,11 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.View
 import android.widget.*
-import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.sqliteapp.adapters.CustomPersonModelAdapter
 import com.example.sqliteapp.databinding.DatabaseScreenBinding
-import com.example.sqliteapp.databinding.DatabaseTestManagementScreenBinding
 import com.example.sqliteapp.exceptions.EmptyRecordAfterExistingVaccinationException
 import com.example.sqliteapp.exceptions.MatchingVaccinationException
 import com.example.sqliteapp.exceptions.VaccineDoesntExist
@@ -21,9 +20,8 @@ import java.util.*
 open class DatabaseActivity : AppCompatActivity() {
     //references to layout controls
     private lateinit var mBinding: DatabaseScreenBinding
-    protected val binding get() = mBinding
+    private val binding get() = mBinding
     private val idnpLength = 13
-    private var personArrayAdapter: ArrayAdapter<*>? = null
     private var databaseHelper: DatabaseHelper? = null
     private var dbDateListener: OnDateSetListener? = null
 
@@ -33,7 +31,6 @@ open class DatabaseActivity : AppCompatActivity() {
         val view = mBinding.root
         setContentView(view)
         databaseHelper = DatabaseHelper(this@DatabaseActivity)
-        showCustomersOnList(databaseHelper!!)
         binding.dbBack.setOnClickListener {
             val intent = Intent(this@DatabaseActivity, DatabaseTestActivity::class.java)
             startActivity(intent)
@@ -102,19 +99,6 @@ open class DatabaseActivity : AppCompatActivity() {
             ).show()
             showCustomersOnList(databaseHelper)
         }
-        binding.databaseListView.onItemClickListener = OnItemClickListener { parent: AdapterView<*>,
-                                                                             _: View?,
-                                                                             position: Int,
-                                                                             _: Long ->
-            val clickedPerson = parent.getItemAtPosition(position) as PersonModel
-            databaseHelper!!.deleteOne(clickedPerson)
-            showCustomersOnList(databaseHelper!!)
-            Toast.makeText(
-                    this@DatabaseActivity,
-                    "Deleted $clickedPerson",
-                    Toast.LENGTH_SHORT
-            ).show()
-        }
         binding.dateId.setOnClickListener {
             val cal = Calendar.getInstance()
             val year = cal[Calendar.YEAR]
@@ -139,12 +123,8 @@ open class DatabaseActivity : AppCompatActivity() {
     }
 
     private fun showCustomersOnList(databaseHelper2: DatabaseHelper) {
-        personArrayAdapter = ArrayAdapter(
-                this@DatabaseActivity,
-                android.R.layout.simple_list_item_1,
-                databaseHelper2.all
-        )
-        binding.databaseListView.adapter = personArrayAdapter
+        binding.recyclerView.adapter = CustomPersonModelAdapter(databaseHelper2.all, databaseHelper2)
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }
 
     private fun checkFields(): Boolean {
@@ -169,6 +149,11 @@ open class DatabaseActivity : AppCompatActivity() {
             return false
         }
         return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showCustomersOnList(databaseHelper!!)
     }
 
     override fun onDestroy() {

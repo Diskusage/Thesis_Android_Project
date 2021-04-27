@@ -2,7 +2,6 @@ package com.example.sqliteapp.models
 
 import com.example.sqliteapp.enums.Vaccines
 import com.example.sqliteapp.exceptions.VaccineDoesntExist
-import java.util.*
 
 class PersonModel {
     //getters/setters
@@ -23,10 +22,10 @@ class PersonModel {
         vaccDate = "None"
     }
     @Throws(VaccineDoesntExist::class)
-    constructor(firstName: String?, secondName: String?, IDNP: String?, type: String, date: String?) {
+    constructor(firstName: String?, secondName: String?, iDNP: String?, type: String, date: String?) {
         this.firstName = firstName
         this.secondName = secondName
-        iDNP = IDNP
+        this.iDNP = iDNP
         isVaccinated = true
         this.type = sToEn(type)
         vaccDate = date
@@ -34,7 +33,10 @@ class PersonModel {
 
     //toString method
     override fun toString(): String {
-        return "$firstName $secondName $type $vaccDate"
+        return "First name: $firstName\n" +
+                "Second name: $secondName\n" +
+                "Vaccine type: $type\n" +
+                "Vaccination date: $vaccDate"
     }
 
     @Throws(VaccineDoesntExist::class)

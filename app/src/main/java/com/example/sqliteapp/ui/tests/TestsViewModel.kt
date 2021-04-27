@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.sqliteapp.database.DatabaseHelper
-import com.example.sqliteapp.database.MyEncoder
+import com.example.sqliteapp.adapters.MyQrCodeEncoder
 import com.example.sqliteapp.models.TestModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -37,18 +37,23 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
         this.backgroundRed = backgroundRed
     }
 
-    fun getDataForAdapter(): List<TestModel> {
-        return databaseHelper!!.getAllTests1Person(idnp!!)
+    fun getDataForAdapter(): MutableList<TestModel>? {
+        return databaseHelper!!.allTests
+
     }
 
-    fun generateQrCode(clickedTest: TestModel) {
-        val testQr = "${clickedTest.idnp} ${clickedTest.testDate} " +
-                "${if (clickedTest.testResult) "Positive" else "Negative"} " +
-                if (clickedTest.isAntibodies) "Antibodies present" else "Antibodies absent"
+
+    fun generateQrCode(clickedTest: TestModel?) {
+        val testQr = "COVID-19 Test details\n" +
+                "IDNP: ${clickedTest?.idnp}\n" +
+                "Test date: ${clickedTest?.testDate}\n" +
+                "Test result: ${if (clickedTest?.testResult == true) "Positive" else "Negative"}\n" +
+                "Antibodies: " +
+                if (clickedTest?.isAntibodies == true) "Present" else "Absent"
         try {
             val writer = MultiFormatWriter()
             val bm = writer.encode(testQr, BarcodeFormat.QR_CODE, 350, 350)
-            val bce = MyEncoder()
+            val bce = MyQrCodeEncoder()
             val bitmap = backgroundRed?.let { bce.createBitmap(bm, it) }
             qrCode.value = bitmap
         } catch (e: WriterException){

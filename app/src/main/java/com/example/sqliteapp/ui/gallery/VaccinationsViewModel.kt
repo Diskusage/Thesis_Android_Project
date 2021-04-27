@@ -6,14 +6,14 @@ import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.sqliteapp.adapters.MyQrCodeEncoder
 import com.example.sqliteapp.database.DatabaseHelper
-import com.example.sqliteapp.database.MyEncoder
 import com.example.sqliteapp.models.PersonModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 
-class GalleryViewModel(application: Application) : AndroidViewModel(application) {
+class VaccinationsViewModel(application: Application) : AndroidViewModel(application) {
     private val mText: MutableLiveData<String> = MutableLiveData()
     private val descText: MutableLiveData<String> = MutableLiveData()
     private var qrPopup: MutableLiveData<Bitmap> = MutableLiveData()
@@ -39,12 +39,15 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
         this.backgroundRed = backgroundRed
     }
 
-    fun generateQrForPopup(person: PersonModel){
-        val qrCode = "${person.iDNP} ${person.type} ${person.vaccDate}"
+    fun generateQrCode(person: PersonModel?){
+        val qrCode = "COVID-19 Vaccination details\n" +
+                "IDNP: ${person?.iDNP}\n" +
+                "Vaccine type: ${person?.type}\n" +
+                "Vaccination date: ${person?.vaccDate}"
         try{
             val writer = MultiFormatWriter()
             val bm = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500)
-            val bce = MyEncoder()
+            val bce = MyQrCodeEncoder()
             val bitmap = backgroundRed?.let { bce.createBitmap(bm, it) }
             qrPopup.value = bitmap
         } catch (e: WriterException){
@@ -53,7 +56,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
     }
 
 
-    fun getDataForAdapter(): List<PersonModel> {
-        return databaseHelper!!.getAll1Person(idnp!!)
+    fun getDataForAdapter(): MutableList<PersonModel>? {
+        return databaseHelper?.getAll1Person(idnp)
     }
 }
