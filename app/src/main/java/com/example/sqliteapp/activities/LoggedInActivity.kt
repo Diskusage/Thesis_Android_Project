@@ -11,12 +11,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.example.sqliteapp.R
 import com.example.sqliteapp.databinding.ActivityLoggedIn2ndBinding
-import com.example.sqliteapp.ui.gallery.VaccinationsViewModel
-import com.example.sqliteapp.ui.home.ProfileViewModel
+import com.example.sqliteapp.ui.vaccinations.VaccinationsViewModel
+import com.example.sqliteapp.ui.profile.ProfileViewModel
 import com.example.sqliteapp.ui.tests.TestsViewModel
 
+//activity behind the fragments, provides navigation and passes on necessary information in a bundle
+//to the fragments.
 
-open class LoggedInSecond : AppCompatActivity() {
+open class LoggedInActivity : AppCompatActivity() {
     private var mAppBarConfiguration: AppBarConfiguration? = null
     private var extras: Bundle? = null
     private lateinit var fBinding: ActivityLoggedIn2ndBinding
@@ -24,7 +26,6 @@ open class LoggedInSecond : AppCompatActivity() {
     private var profileViewModel: ProfileViewModel ?= null
     private var vaccinationsViewModel: VaccinationsViewModel ?= null
     private var testsViewModel: TestsViewModel ?= null
-    private var backGroundRed: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,19 +52,8 @@ open class LoggedInSecond : AppCompatActivity() {
         testsViewModel = ViewModelProvider(this).get(TestsViewModel::class.java)
         val view = fBinding.root
         setContentView(view)
-        backGroundRed = if (extras?.get("Background") == true){
-            view.setBackgroundColor(Color.parseColor(getString(R.string.RED)))
-            true
-        } else {
-            view.setBackgroundColor(Color.parseColor(getString(R.string.GREEN)))
-            false
-        }
-        if (extras?.get("Background") == null){
-            view.setBackgroundColor(Color.parseColor(getString(R.string.STANDARD)))
-        }
-
-        testsViewModel?.initList(extras, backGroundRed)
-        vaccinationsViewModel?.initList(extras, backGroundRed)
+        testsViewModel?.initList(extras)
+        vaccinationsViewModel?.initList(extras)
         profileViewModel?.generateQrCodes(extras)
     }
 

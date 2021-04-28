@@ -8,11 +8,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.sqliteapp.adapters.CustomTestModelAdapter
 import com.example.sqliteapp.databinding.DatabaseTestManagementScreenBinding
 import com.example.sqliteapp.models.TestModel
-
+//same thing as DatabaseActivity, but for working with another db table
 open class DatabaseTestActivity : AppCompatActivity() {
+    //use binding for more efficient layout control
     private lateinit var mBinding: DatabaseTestManagementScreenBinding
     private val binding get() = mBinding
+    //idnp is 13 numbers long
     private val idnpLength = 13
+    //helper to work with db
     private var databaseHelper: DatabaseHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +25,6 @@ open class DatabaseTestActivity : AppCompatActivity() {
         setContentView(view)
         databaseHelper = DatabaseHelper(this@DatabaseTestActivity)
         showCustomersOnList(databaseHelper!!)
-        binding.dbTestBack.setOnClickListener { finish() }
         binding.btnTestAdd.setOnClickListener(View.OnClickListener {
             if (!checkFields()) return@OnClickListener
             val testModel: TestModel?

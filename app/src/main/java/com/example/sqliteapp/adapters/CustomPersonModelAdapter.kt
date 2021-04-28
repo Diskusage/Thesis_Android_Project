@@ -10,6 +10,7 @@ import com.example.sqliteapp.R
 import com.example.sqliteapp.database.DatabaseHelper
 import com.example.sqliteapp.models.PersonModel
 
+//adapter to demonstrate all vaccination entries in the database with RecyclerView list
 class CustomPersonModelAdapter(private val dataSet: MutableList<PersonModel>, private val databaseHelper: DatabaseHelper) :
         RecyclerView.Adapter<CustomPersonModelAdapter.ViewHolder>() {
 

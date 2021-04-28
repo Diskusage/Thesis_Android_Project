@@ -26,9 +26,14 @@
     <string name="db_test_result">Test result</string>
     <string name="db_test_date">Test date</string>
     <string name="back">Back</string>
-    <string name="GREEN">#9BE128</string>
-    <string name="RED">#DF2D1E</string>
+    <string name="GREEN">#BE0F9E27</string>
+    <string name="RED">#D3E61405</string>
     <string name="STANDARD">#FAFAFA</string>
     <string name="delete">Delete</string>
     <string name="generate">Generate</string>
+    <string name="qr_code_for_last_vaccination">QR code for last vaccination</string>
+    <string name="qr_code_for_last_test">QR code for last test</string>
+    <string name="first_name">First name:</string>
+    <string name="second_name">Second name:</string>
+    <string name="idnp">IDNP:</string>
 </resources>

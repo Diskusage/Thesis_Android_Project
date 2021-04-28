@@ -13,13 +13,16 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 
+//MVVM architecture for fragments
+//functions, processes and interactions with model
+//to transfer data back to view
 class TestsViewModel(application: Application) : AndroidViewModel(application) {
     private var qrCode: MutableLiveData<Bitmap> = MutableLiveData()
     private val description: MutableLiveData<String> = MutableLiveData()
     private val mText: MutableLiveData<String> = MutableLiveData()
     private var idnp: String? = null
     private var databaseHelper: DatabaseHelper? = null
-    private var backgroundRed: Boolean? = null
+
     val text: LiveData<String>
         get() = mText
     val qr: LiveData<Bitmap>
@@ -32,16 +35,13 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
         description.value = "QR code for this test"
     }
 
-    fun initList(extras: Bundle?, backgroundRed: Boolean?){
+    fun initList(extras: Bundle?){
         idnp = extras?.getString("IDNP")
-        this.backgroundRed = backgroundRed
     }
 
     fun getDataForAdapter(): MutableList<TestModel>? {
         return databaseHelper!!.allTests
-
     }
-
 
     fun generateQrCode(clickedTest: TestModel?) {
         val testQr = "COVID-19 Test details\n" +
@@ -54,7 +54,7 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
             val writer = MultiFormatWriter()
             val bm = writer.encode(testQr, BarcodeFormat.QR_CODE, 350, 350)
             val bce = MyQrCodeEncoder()
-            val bitmap = backgroundRed?.let { bce.createBitmap(bm, it) }
+            val bitmap = bce.createBitmap(bm)
             qrCode.value = bitmap
         } catch (e: WriterException){
             e.printStackTrace()

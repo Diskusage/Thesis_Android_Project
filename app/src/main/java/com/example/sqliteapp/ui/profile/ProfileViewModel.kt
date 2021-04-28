@@ -1,4 +1,4 @@
-package com.example.sqliteapp.ui.home
+package com.example.sqliteapp.ui.profile
 
 import android.app.Application
 import android.graphics.Bitmap
@@ -12,6 +12,9 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 
+//MVVM architecture for fragments
+//functions, processes and interactions with model
+//to transfer data back to view
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
     private val mText: MutableLiveData<String> = MutableLiveData()
     private val fText: MutableLiveData<String> = MutableLiveData()
@@ -38,10 +41,9 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         get() = iDnp
 
     init {
-        mText.value = "Latest vaccine QR code"
-        fText.value = "Latest test QR code"
+        mText.value = "No vaccinations found"
+        fText.value = "No tests found"
     }
-
     fun generateQrCodes(extras: Bundle?) {
         databaseHelper = DatabaseHelper(getApplication())
         fName.value = extras?.getString("FName")
@@ -70,21 +72,15 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             val bce = MyQrCodeEncoder()
             if (testQr != null) {
                 val bm1 = writer.encode(testQr, BarcodeFormat.QR_CODE, 300, 300)
-                val bitmap = if (testRes == null) {
-                    bce.createBitmap(bm1)
-                } else {
-                    bce.createBitmap(bm1, testRes as Boolean?)
-                }
+                val bitmap = bce.createBitmap(bm1)
                 fCode.value = bitmap
+                mText.value = "Latest vaccine QR code"
             }
             if (secondQr != null) {
                 val bm2 = writer.encode(secondQr, BarcodeFormat.QR_CODE, 300, 300)
-                val bitmap2 = if (testRes == null) {
-                    bce.createBitmap(bm2)
-                } else {
-                    bce.createBitmap(bm2, testRes as Boolean?)
-                }
+                val bitmap2 = bce.createBitmap(bm2)
                 sCode.value = bitmap2
+                fText.value = "Latest test QR code"
             }
         }
         catch (e: WriterException) {

@@ -1,4 +1,4 @@
-package com.example.sqliteapp.ui.home
+package com.example.sqliteapp.ui.profile
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -9,7 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.sqliteapp.databinding.FragmentProfileBinding
 
-open class ProfileFragment : Fragment() {
+//MVVM architecture for fragments
+//a profile view, consists of layout bindings and
+//listeners for user interaction
+open class ProfileView : Fragment() {
     private val profileViewModel: ProfileViewModel by activityViewModels()
     private lateinit var mBinding : FragmentProfileBinding
     private val binding get() = mBinding

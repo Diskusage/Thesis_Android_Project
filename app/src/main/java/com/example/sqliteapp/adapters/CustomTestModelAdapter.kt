@@ -10,6 +10,7 @@ import com.example.sqliteapp.R
 import com.example.sqliteapp.database.DatabaseHelper
 import com.example.sqliteapp.models.TestModel
 
+//an adapter to demonstrate all test entries with RecyclerView list
 class CustomTestModelAdapter(private val dataSet: MutableList<TestModel>?, private val databaseHelper: DatabaseHelper) :
         RecyclerView.Adapter<CustomTestModelAdapter.ViewHolder>() {
     /**

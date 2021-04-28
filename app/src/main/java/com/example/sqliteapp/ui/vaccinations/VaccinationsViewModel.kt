@@ -1,4 +1,4 @@
-package com.example.sqliteapp.ui.gallery
+package com.example.sqliteapp.ui.vaccinations
 
 import android.app.Application
 import android.graphics.Bitmap
@@ -13,13 +13,15 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 
+//MVVM architecture for fragments
+//functions, processes and interactions with model
+//to transfer data back to view
 class VaccinationsViewModel(application: Application) : AndroidViewModel(application) {
     private val mText: MutableLiveData<String> = MutableLiveData()
     private val descText: MutableLiveData<String> = MutableLiveData()
     private var qrPopup: MutableLiveData<Bitmap> = MutableLiveData()
     private var idnp: String? = null
     private var databaseHelper: DatabaseHelper? = null
-    private var backgroundRed: Boolean? = null
 
     val desc: LiveData<String>
         get() = descText
@@ -34,9 +36,8 @@ class VaccinationsViewModel(application: Application) : AndroidViewModel(applica
         descText.value = "QR code for this vaccination"
     }
 
-    fun initList(extras: Bundle?, backgroundRed: Boolean?){
+    fun initList(extras: Bundle?){
         idnp = extras?.getString("IDNP")
-        this.backgroundRed = backgroundRed
     }
 
     fun generateQrCode(person: PersonModel?){
@@ -48,7 +49,7 @@ class VaccinationsViewModel(application: Application) : AndroidViewModel(applica
             val writer = MultiFormatWriter()
             val bm = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500)
             val bce = MyQrCodeEncoder()
-            val bitmap = backgroundRed?.let { bce.createBitmap(bm, it) }
+            val bitmap = bce.createBitmap(bm)
             qrPopup.value = bitmap
         } catch (e: WriterException){
             e.printStackTrace()

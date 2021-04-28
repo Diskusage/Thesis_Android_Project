@@ -2,7 +2,7 @@ package com.example.sqliteapp.models
 
 import com.example.sqliteapp.enums.Vaccines
 import com.example.sqliteapp.exceptions.VaccineDoesntExist
-
+//class with fields describing a person + vaccination
 class PersonModel {
     //getters/setters
     var firstName: String? = null

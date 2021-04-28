@@ -4,8 +4,10 @@ import android.graphics.Bitmap
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
 
+//a custom encoder based on BarcodeEncoder library,
+//needed to create appropriate backgrounds for QR codes
+//so they would blend in with the rest of the background
 class MyQrCodeEncoder : BarcodeEncoder() {
-    //    private static final int WHITE = 0xFFFFFFFF;
     fun createBitmap(matrix: BitMatrix, testResult: Boolean?): Bitmap {
         var white: Int = if (testResult == true) {
             0xDF2D1E
@@ -13,7 +15,7 @@ class MyQrCodeEncoder : BarcodeEncoder() {
             0x9BE128
         }
         if (testResult == null){
-            white = 0xFFFFFFFF.toInt()
+            white = 0xFAFAFA
         }
         val width = matrix.width
         val height = matrix.height
@@ -27,27 +29,7 @@ class MyQrCodeEncoder : BarcodeEncoder() {
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
         return bitmap
-    } //    public Bitmap createBitmap(BitMatrix matrix, boolean testResult) {
-
-    //        int white;
-    //        if (testResult){
-    //            white = 0xDF2D1E;
-    //        } else {
-    //            white = 0x9BE128;
-    //        }
-    //        int width = matrix.getWidth();
-    //        int height = matrix.getHeight();
-    //        int[] pixels = new int[width * height];
-    //        for (int y = 0; y < height; y++) {
-    //            int offset = y * width;
-    //            for (int x = 0; x < width; x++) {
-    //                pixels[offset + x] = matrix.get(x, y) ? BLACK : white;
-    //            }
-    //        }
-    //        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-    //        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-    //        return bitmap;
-    //    }
+    }
     companion object {
         private const val BLACK = -0x1000000
     }

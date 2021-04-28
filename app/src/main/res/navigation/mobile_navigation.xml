@@ -7,18 +7,18 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.sqliteapp.ui.home.ProfileFragment"
+        android:name="com.example.sqliteapp.ui.profile.ProfileView"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/nav_tests"
-        android:name="com.example.sqliteapp.ui.tests.TestsFragment"
+        android:name="com.example.sqliteapp.ui.tests.TestsView"
         android:label="@string/menu_tests"
         tools:layout="@layout/fragment_tests" />
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.example.sqliteapp.ui.gallery.VaccinationsFragment"
+        android:name="com.example.sqliteapp.ui.vaccinations.VaccinationsView"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_vaccinations" />
 

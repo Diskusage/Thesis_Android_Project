@@ -18,11 +18,14 @@ import com.example.sqliteapp.models.PersonModel
 import java.util.*
 
 open class DatabaseActivity : AppCompatActivity() {
-    //references to layout controls
+    //use binding for more efficient layout control
     private lateinit var mBinding: DatabaseScreenBinding
     private val binding get() = mBinding
+    //an idnp is 13 numbers long
     private val idnpLength = 13
+    //helper to work with db
     private var databaseHelper: DatabaseHelper? = null
+    //a listener for date-picking
     private var dbDateListener: OnDateSetListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,10 +34,7 @@ open class DatabaseActivity : AppCompatActivity() {
         val view = mBinding.root
         setContentView(view)
         databaseHelper = DatabaseHelper(this@DatabaseActivity)
-        binding.dbBack.setOnClickListener {
-            val intent = Intent(this@DatabaseActivity, DatabaseTestActivity::class.java)
-            startActivity(intent)
-        }
+        //working with database to add a new entry while catching bad entries
         binding.btnAdd.setOnClickListener {
             var isDateSet = false
             if (binding.dateId.text != "Date of vaccination") isDateSet = true
@@ -99,6 +99,7 @@ open class DatabaseActivity : AppCompatActivity() {
             ).show()
             showCustomersOnList(databaseHelper)
         }
+        //date-picking click listener
         binding.dateId.setOnClickListener {
             val cal = Calendar.getInstance()
             val year = cal[Calendar.YEAR]
@@ -122,11 +123,12 @@ open class DatabaseActivity : AppCompatActivity() {
         }
     }
 
+    //use recyclerview to demonstrate current entries
     private fun showCustomersOnList(databaseHelper2: DatabaseHelper) {
         binding.recyclerView.adapter = CustomPersonModelAdapter(databaseHelper2.all, databaseHelper2)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }
-
+    //checks for correct field filling
     private fun checkFields(): Boolean {
         if (
                 binding.databaseIDNP.length() == 0 ||
@@ -150,12 +152,11 @@ open class DatabaseActivity : AppCompatActivity() {
         }
         return true
     }
-
     override fun onResume() {
         super.onResume()
         showCustomersOnList(databaseHelper!!)
     }
-
+    //prevent memory leaks
     override fun onDestroy() {
         super.onDestroy()
         databaseHelper = null

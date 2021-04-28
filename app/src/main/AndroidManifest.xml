@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.LoggedInSecond"
+            android:name=".activities.LoggedInActivity"
             android:label="@string/title_activity_logged_in_2nd"
             android:theme="@style/Theme.SQLiteApp.NoActionBar" />
         <activity android:name=".database.DatabaseActivity" />

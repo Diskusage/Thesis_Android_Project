@@ -63,18 +63,30 @@
         android:text="@string/LoginBtn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_IDNP" />
+        app:layout_constraintTop_toBottomOf="@+id/et_IDNP"
+        app:layout_constraintVertical_bias="0.285" />
 
     <Button
         android:id="@+id/btn_toDB"
         android:layout_width="144dp"
         android:layout_height="75dp"
+        android:layout_marginTop="32dp"
         android:text="@string/GoToDatabase"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_login"
-        app:layout_constraintVertical_bias="0.277" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+
+    <Button
+        android:id="@+id/btn_to_test_db"
+        android:layout_width="144dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/ToTests"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_toDB" />
 </androidx.constraintlayout.widget.ConstraintLayout>

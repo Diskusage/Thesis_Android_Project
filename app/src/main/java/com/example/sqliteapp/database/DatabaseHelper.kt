@@ -9,7 +9,8 @@ import com.example.sqliteapp.exceptions.MatchingVaccinationException
 import com.example.sqliteapp.exceptions.VaccineDoesntExist
 import com.example.sqliteapp.models.PersonModel
 import com.example.sqliteapp.models.TestModel
-
+//helper, has a ton of utility functions to work with db and pull
+//data for all possible situations
 class DatabaseHelper(context: Context?) : SQLiteOpenHelper(
         context,
         "Person DataBase",
@@ -27,7 +28,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(
         db.execSQL(createTableStatement)
     }
 
-    //called when the version of the database changes (forward/backward compatability)
+    //called when the version of the database changes (forward/backward compatibility)
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
 fun checkLogin(personModel: PersonModel): Boolean {
