@@ -1,15 +1,19 @@
-package com.example.sqliteapp.ui.vaccinations
+package com.example.sqliteapp.loginFragments.vaccinations
 
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.sqliteapp.adapters.ClickListener
 import com.example.sqliteapp.adapters.GenerateQrCodeAdapter
 import com.example.sqliteapp.databinding.FragmentVaccinationsBinding
+import kotlinx.coroutines.CoroutineExceptionHandler
 
 //MVVM architecture for fragments
 //a vaccinations view, consists of layout bindings and
@@ -18,6 +22,14 @@ open class VaccinationsView : Fragment() {
     private val vaccinationsViewModel: VaccinationsViewModel by activityViewModels()
     private lateinit var mBinding : FragmentVaccinationsBinding
     private val binding get() = mBinding
+    private val handler = CoroutineExceptionHandler{_, exception ->
+        if (Looper.myLooper() == null) {
+            Looper.prepare()
+            Looper.loop()
+        }
+        Log.i("Coroutine:", "Error", exception)
+        Toast.makeText(activity, "Error: ${exception.cause}", Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -39,7 +51,7 @@ open class VaccinationsView : Fragment() {
     private fun showList(){
 
         mBinding.vaccHistory.adapter = GenerateQrCodeAdapter(
-                vaccinationsViewModel.getDataForAdapter(),
+                vaccinationsViewModel.getDataForAdapter(handler),
                 object : ClickListener {
                     override fun onPositionClicked(i: Int) {
                         vaccinationsViewModel.desc.observe(
@@ -51,7 +63,7 @@ open class VaccinationsView : Fragment() {
                                 viewLifecycleOwner,
                                 { s -> mBinding.imageView2.setImageBitmap(s) }
                         )
-                        vaccinationsViewModel.generateQrCode(vaccinationsViewModel.getDataForAdapter()?.get(i))
+                        vaccinationsViewModel.generateQrCode(vaccinationsViewModel.getDataForAdapter(handler)[i])
                     }
                 }
         )

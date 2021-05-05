@@ -1,16 +1,19 @@
-package com.example.sqliteapp.ui.tests
+package com.example.sqliteapp.loginFragments.tests
 
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.example.sqliteapp.databinding.FragmentTestsBinding
 import com.example.sqliteapp.adapters.ClickListener
 import com.example.sqliteapp.adapters.GenerateColoredRecycler
-import com.example.sqliteapp.adapters.GenerateQrCodeAdapter
+import com.example.sqliteapp.databinding.FragmentTestsBinding
+import kotlinx.coroutines.CoroutineExceptionHandler
 
 //MVVM architecture for fragments
 //a tests view, consists of layout bindings and
@@ -20,6 +23,14 @@ open class TestsView : Fragment() {
     private val binding get() = mBinding
     var idnp: String? = null
     private val testsViewModel: TestsViewModel by activityViewModels()
+    private val handler = CoroutineExceptionHandler{_, exception ->
+        if (Looper.myLooper() == null) {
+            Looper.prepare()
+            Looper.loop()
+        }
+        Log.i("Coroutine:", "Error", exception)
+        Toast.makeText(activity, "Error: ${exception.cause}", Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -42,7 +53,7 @@ open class TestsView : Fragment() {
     private fun showList(){
 
         mBinding.testsHistory.adapter = GenerateColoredRecycler(
-                testsViewModel.getDataForAdapter(),
+                testsViewModel.getDataForAdapter(handler),
                 object : ClickListener {
                     override fun onPositionClicked(i: Int) {
                         testsViewModel.desc.observe(
@@ -54,7 +65,7 @@ open class TestsView : Fragment() {
                                 viewLifecycleOwner,
                                 { s -> mBinding.imageViewTest.setImageBitmap(s) }
                         )
-                        testsViewModel.generateQrCode(testsViewModel.getDataForAdapter()?.get(i))
+                        testsViewModel.generateQrCode(testsViewModel.getDataForAdapter(handler)[i])
                     }
                 }
         )

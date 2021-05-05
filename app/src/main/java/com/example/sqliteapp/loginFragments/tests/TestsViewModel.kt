@@ -1,17 +1,21 @@
-package com.example.sqliteapp.ui.tests
+package com.example.sqliteapp.loginFragments.tests
 
 import android.app.Application
 import android.graphics.Bitmap
-import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.sqliteapp.database.DatabaseHelper
-import com.example.sqliteapp.adapters.MyQrCodeEncoder
+import com.example.sqliteapp.database.AppDatabase
+import com.example.sqliteapp.database.toMap
 import com.example.sqliteapp.models.TestModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
+import com.journeyapps.barcodescanner.BarcodeEncoder
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 
 //MVVM architecture for fragments
 //functions, processes and interactions with model
@@ -21,7 +25,7 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
     private val description: MutableLiveData<String> = MutableLiveData()
     private val mText: MutableLiveData<String> = MutableLiveData()
     private var idnp: String? = null
-    private var databaseHelper: DatabaseHelper? = null
+
 
     val text: LiveData<String>
         get() = mText
@@ -30,17 +34,25 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
     val desc: LiveData<String>
         get() = description
     init {
-        databaseHelper = DatabaseHelper(getApplication())
         mText.value = "Test history"
         description.value = "QR code for this test"
     }
 
-    fun initList(extras: Bundle?){
-        idnp = extras?.getString("IDNP")
+    fun getKey(key: String){
+        idnp = key
     }
 
-    fun getDataForAdapter(): MutableList<TestModel>? {
-        return databaseHelper!!.allTests
+    fun getDataForAdapter(handler: CoroutineExceptionHandler): MutableList<TestModel> {
+        val toRet = ArrayList<TestModel>()
+        runBlocking (handler){
+            val get = async(Dispatchers.Default) {
+                AppDatabase.getInstance(getApplication()).DaoTest().getAllTestForPerson(idnp)
+            }
+            for (t in get.await()){
+                toRet.add(t.toMap())
+            }
+        }
+        return toRet
     }
 
     fun generateQrCode(clickedTest: TestModel?) {
@@ -53,7 +65,7 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
         try {
             val writer = MultiFormatWriter()
             val bm = writer.encode(testQr, BarcodeFormat.QR_CODE, 350, 350)
-            val bce = MyQrCodeEncoder()
+            val bce = BarcodeEncoder()
             val bitmap = bce.createBitmap(bm)
             qrCode.value = bitmap
         } catch (e: WriterException){

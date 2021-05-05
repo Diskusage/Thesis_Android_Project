@@ -1,17 +1,21 @@
-package com.example.sqliteapp.ui.vaccinations
+package com.example.sqliteapp.loginFragments.vaccinations
 
 import android.app.Application
 import android.graphics.Bitmap
-import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.sqliteapp.adapters.MyQrCodeEncoder
-import com.example.sqliteapp.database.DatabaseHelper
+import com.example.sqliteapp.database.AppDatabase
+import com.example.sqliteapp.database.toMap
 import com.example.sqliteapp.models.PersonModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
+import com.journeyapps.barcodescanner.BarcodeEncoder
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 
 //MVVM architecture for fragments
 //functions, processes and interactions with model
@@ -21,7 +25,6 @@ class VaccinationsViewModel(application: Application) : AndroidViewModel(applica
     private val descText: MutableLiveData<String> = MutableLiveData()
     private var qrPopup: MutableLiveData<Bitmap> = MutableLiveData()
     private var idnp: String? = null
-    private var databaseHelper: DatabaseHelper? = null
 
     val desc: LiveData<String>
         get() = descText
@@ -31,13 +34,12 @@ class VaccinationsViewModel(application: Application) : AndroidViewModel(applica
         get() = mText
 
     init {
-        databaseHelper = DatabaseHelper(getApplication())
         mText.value = "History of vaccinations"
         descText.value = "QR code for this vaccination"
     }
 
-    fun initList(extras: Bundle?){
-        idnp = extras?.getString("IDNP")
+    fun getKey(key: String){
+        idnp = key
     }
 
     fun generateQrCode(person: PersonModel?){
@@ -48,7 +50,7 @@ class VaccinationsViewModel(application: Application) : AndroidViewModel(applica
         try{
             val writer = MultiFormatWriter()
             val bm = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500)
-            val bce = MyQrCodeEncoder()
+            val bce = BarcodeEncoder()
             val bitmap = bce.createBitmap(bm)
             qrPopup.value = bitmap
         } catch (e: WriterException){
@@ -57,7 +59,16 @@ class VaccinationsViewModel(application: Application) : AndroidViewModel(applica
     }
 
 
-    fun getDataForAdapter(): MutableList<PersonModel>? {
-        return databaseHelper?.getAll1Person(idnp)
+    fun getDataForAdapter(handler: CoroutineExceptionHandler): ArrayList<PersonModel> {
+        val toRet = ArrayList<PersonModel>()
+        runBlocking(handler) {
+            val get = async(Dispatchers.Default) {
+                AppDatabase.getInstance(getApplication()).DaoPerson().getRecordsForPerson(idnp)
+            }
+            for (t in get.await()){
+                toRet.add(t.toMap())
+            }
+        }
+        return toRet
     }
 }

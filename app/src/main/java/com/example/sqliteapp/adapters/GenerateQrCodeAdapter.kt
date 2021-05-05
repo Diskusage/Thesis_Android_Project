@@ -3,54 +3,53 @@ package com.example.sqliteapp.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sqliteapp.R
+import com.example.sqliteapp.databinding.ListRowQrBinding
+import com.example.sqliteapp.models.PersonModel
 import java.lang.ref.WeakReference
 
 //an adapter to demonstrate tests/vaccinations with button option,
 //has a callback for click events
-class GenerateQrCodeAdapter(private val dataSet: MutableList<*>?, private val listener: ClickListener) :
+class GenerateQrCodeAdapter(private val dataSet: List<PersonModel> = arrayListOf(), private val listener: ClickListener) :
         RecyclerView.Adapter<GenerateQrCodeAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
-    class ViewHolder(view: View, listener: ClickListener) : RecyclerView.ViewHolder(view), View.OnClickListener{
-
-        val person: TextView = view.findViewById(R.id.textViewQr)
-        private val btn: Button = view.findViewById(R.id.rowButtonQr)
+    class ViewHolder(private val binding: ListRowQrBinding, listener: ClickListener) : RecyclerView.ViewHolder(binding.root), View.OnClickListener{
         private val listenerRef: WeakReference<ClickListener> = WeakReference(listener)
+        private val clickListener get() = listenerRef.get()
 
         init {
             // Define click listener for the ViewHolder's View.
-            btn.setOnClickListener(this)
+            binding.rowButtonQr.setOnClickListener(this)
         }
 
         override fun onClick(v: View?){
-            listenerRef.get()?.onPositionClicked(adapterPosition)
+            clickListener?.onPositionClicked(adapterPosition)
+        }
+
+        fun onBind(dataSet: PersonModel){
+            binding.textViewQr.text = dataSet.toString()
         }
     }
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(viewGroup.context)
-                .inflate(R.layout.list_row_qr, viewGroup, false)
-
-        return ViewHolder(view, listener)
+        val inflater = LayoutInflater.from(viewGroup.context)
+        return ViewHolder(ListRowQrBinding.inflate(inflater, viewGroup, false), listener)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.person.text = dataSet?.get(position)?.toString() ?: return
+        viewHolder.onBind(dataSet[position])
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet?.size ?: -1
+    override fun getItemCount() = dataSet.size
 
 }

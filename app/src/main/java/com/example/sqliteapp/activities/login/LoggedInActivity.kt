@@ -1,6 +1,5 @@
-package com.example.sqliteapp.activities
+package com.example.sqliteapp.activities.login
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
@@ -11,28 +10,34 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.example.sqliteapp.R
 import com.example.sqliteapp.databinding.ActivityLoggedIn2ndBinding
-import com.example.sqliteapp.ui.vaccinations.VaccinationsViewModel
-import com.example.sqliteapp.ui.profile.ProfileViewModel
-import com.example.sqliteapp.ui.tests.TestsViewModel
+import com.example.sqliteapp.loginFragments.profile.ProfileViewModel
+import com.example.sqliteapp.loginFragments.tests.TestsViewModel
+import com.example.sqliteapp.loginFragments.vaccinations.VaccinationsViewModel
 
 //activity behind the fragments, provides navigation and passes on necessary information in a bundle
 //to the fragments.
 
-open class LoggedInActivity : AppCompatActivity() {
+class LoggedInActivity : AppCompatActivity() {
     private var mAppBarConfiguration: AppBarConfiguration? = null
-    private var extras: Bundle? = null
     private lateinit var fBinding: ActivityLoggedIn2ndBinding
     private val binding get() = fBinding
-    private var profileViewModel: ProfileViewModel ?= null
-    private var vaccinationsViewModel: VaccinationsViewModel ?= null
-    private var testsViewModel: TestsViewModel ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val loggedInActivityViewModel: LoggedInActivityViewModel = ViewModelProvider(this).get(LoggedInActivityViewModel::class.java)
+        val profileViewModel: ProfileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+        val vaccinationsViewModel: VaccinationsViewModel = ViewModelProvider(this).get(VaccinationsViewModel::class.java)
+        val testsViewModel: TestsViewModel = ViewModelProvider(this).get(TestsViewModel::class.java)
+        loggedInActivityViewModel.initFragments(
+                intent.extras?.getString("IDNP"),
+                intent.extras?.getString("fn"),
+                intent.extras?.getString("sn"),
+                profileViewModel,
+                vaccinationsViewModel,
+                testsViewModel
+        )
         fBinding = ActivityLoggedIn2ndBinding.inflate(this.layoutInflater)
         setSupportActionBar(binding.appBarMain.toolbar)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         mAppBarConfiguration = AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_tests, R.id.nav_gallery)
                 .setDrawerLayout(binding.drawerLayout)
@@ -45,16 +50,8 @@ open class LoggedInActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val intent = intent
-        extras = intent.extras
-        profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
-        vaccinationsViewModel = ViewModelProvider(this).get(VaccinationsViewModel::class.java)
-        testsViewModel = ViewModelProvider(this).get(TestsViewModel::class.java)
         val view = fBinding.root
         setContentView(view)
-        testsViewModel?.initList(extras)
-        vaccinationsViewModel?.initList(extras)
-        profileViewModel?.generateQrCodes(extras)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
