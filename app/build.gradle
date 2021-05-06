@@ -9,17 +9,12 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.sqliteapp"
+        applicationId "com.app.greenpass"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    dexOptions {
-        preDexLibraries false
     }
 
     buildTypes {

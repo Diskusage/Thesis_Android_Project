@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SQLite App</string>
+    <string name="app_name">Green Passport</string>
     <string name="PersonName">First name</string>
     <string name="SecondName">Second name</string>
     <string name="LoginBtn">Login</string>
