@@ -1,14 +1,18 @@
 package com.app.greenpass.models
 
 //class with fields describing tests, bound to IDNP
-class TestModel(var idnp: String, var testResult: Boolean, var testDate: String, antibodies: Boolean) {
-    var isAntibodies = antibodies
+class TestModel(
+        var testResult: Boolean,
+        var testDate: String,
+        var antibodies: Boolean,
+        var owner: Int,
+)
+{
 
     override fun toString(): String {
-        return  "Test date: $testDate\n" +
-                "Antibodies: ${if (isAntibodies) "Present" else "Absent"}"
+        return  "OWNER:\n $owner\n" +
+                "TEST DATE:\n $testDate\n" +
+                "ANTIBODIES:\n ${if (antibodies) "PRESENT" else "ABSENT"}"
     }
-    fun toCode(): String {
-        return idnp+testDate+testResult+isAntibodies
-    }
+
 }

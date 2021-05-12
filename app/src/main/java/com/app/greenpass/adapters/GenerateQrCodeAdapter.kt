@@ -5,12 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.greenpass.databinding.ListRowQrBinding
-import com.app.greenpass.models.PersonModel
+import com.app.greenpass.models.VaccinationModel
 import java.lang.ref.WeakReference
 
 //an adapter to demonstrate tests/vaccinations with button option,
 //has a callback for click events
-class GenerateQrCodeAdapter(private val dataSet: List<PersonModel> = arrayListOf(), private val listener: ClickListener) :
+class GenerateQrCodeAdapter(private val dataSet: List<VaccinationModel> = arrayListOf(), private val listener: ClickListener) :
         RecyclerView.Adapter<GenerateQrCodeAdapter.ViewHolder>() {
 
     /**
@@ -30,7 +30,7 @@ class GenerateQrCodeAdapter(private val dataSet: List<PersonModel> = arrayListOf
             clickListener?.onPositionClicked(adapterPosition)
         }
 
-        fun onBind(dataSet: PersonModel){
+        fun onBind(dataSet: VaccinationModel){
             binding.textViewQr.text = dataSet.toString()
         }
     }

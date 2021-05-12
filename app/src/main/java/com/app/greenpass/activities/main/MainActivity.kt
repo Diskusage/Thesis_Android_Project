@@ -7,12 +7,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.app.greenpass.activities.vaccdb.DatabaseActivity
-import com.app.greenpass.activities.testdb.DatabaseTestActivity
 import com.app.greenpass.activities.login.LoggedInActivity
+import com.app.greenpass.activities.persondb.DatabasePersonActivity
+import com.app.greenpass.activities.testdb.DatabaseTestActivity
+import com.app.greenpass.activities.vaccdb.DatabaseVaccinationActivity
 import com.app.greenpass.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
-import java.lang.IllegalArgumentException
 
 
 //the first activity you see upon starting the app,
@@ -32,36 +32,38 @@ open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(this.layoutInflater)
-        val view = mBinding.root
-        setContentView(view)
+        setContentView(mBinding.root)
         val mainActivityViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         binding.btnLogin.setOnClickListener {
-            try {
-                mainActivityViewModel.onClickedLogin(
+            runBlocking {
+                val checkLogin = mainActivityViewModel.onClickedLogin(
                         binding.etFirstName.text.toString(),
                         binding.etSecondName.text.toString(),
                         binding.etIDNP.text.toString(),
                         handler
                 )
-                val intent = Intent(this@MainActivity, LoggedInActivity::class.java)
-                intent.putExtra("fn", binding.etFirstName.text.toString())
-                intent.putExtra("IDNP", binding.etIDNP.text.toString())
-                intent.putExtra("sn", binding.etSecondName.text.toString())
-                startActivity(intent)
-            } catch (exception: IllegalArgumentException){
-                Toast.makeText(this@MainActivity, "Please fill all the fields.", Toast.LENGTH_SHORT).show()
-            } catch (exception: NoSuchElementException){
-                Toast.makeText(this@MainActivity, "No account found", Toast.LENGTH_SHORT).show()
+                if (checkLogin != null){
+                    val intent = Intent(this@MainActivity, LoggedInActivity::class.java)
+                    intent.putExtra("user", checkLogin.hashCode())
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(this@MainActivity, "No such user", Toast.LENGTH_SHORT).show()
+                }
             }
         }
         //go to database population screen
         binding.btnToDB.setOnClickListener {
-            val intent = Intent(this@MainActivity, DatabaseActivity::class.java)
+            val intent = Intent(this@MainActivity, DatabaseVaccinationActivity::class.java)
             startActivity(intent)
         }
         binding.btnToTestDb.setOnClickListener{
             val intent = Intent(this@MainActivity, DatabaseTestActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.btnToPeople.setOnClickListener {
+            val intent = Intent(this@MainActivity, DatabasePersonActivity::class.java)
             startActivity(intent)
         }
     }

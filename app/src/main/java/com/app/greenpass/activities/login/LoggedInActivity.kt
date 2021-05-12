@@ -13,6 +13,9 @@ import com.app.greenpass.databinding.ActivityLoggedIn2ndBinding
 import com.app.greenpass.loginFragments.profile.ProfileViewModel
 import com.app.greenpass.loginFragments.tests.TestsViewModel
 import com.app.greenpass.loginFragments.vaccinations.VaccinationsViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 //activity behind the fragments, provides navigation and passes on necessary information in a bundle
 //to the fragments.
@@ -28,14 +31,15 @@ class LoggedInActivity : AppCompatActivity() {
         val profileViewModel: ProfileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
         val vaccinationsViewModel: VaccinationsViewModel = ViewModelProvider(this).get(VaccinationsViewModel::class.java)
         val testsViewModel: TestsViewModel = ViewModelProvider(this).get(TestsViewModel::class.java)
-        loggedInActivityViewModel.initFragments(
-                intent.extras?.getString("IDNP"),
-                intent.extras?.getString("fn"),
-                intent.extras?.getString("sn"),
-                profileViewModel,
-                vaccinationsViewModel,
-                testsViewModel
-        )
+        GlobalScope.launch(Dispatchers.Default) {
+            loggedInActivityViewModel.initFragments(
+                    intent.extras,
+                    profileViewModel,
+                    vaccinationsViewModel,
+                    testsViewModel
+            )
+        }
+
         fBinding = ActivityLoggedIn2ndBinding.inflate(this.layoutInflater)
         setSupportActionBar(binding.appBarMain.toolbar)
         mAppBarConfiguration = AppBarConfiguration.Builder(
@@ -50,8 +54,7 @@ class LoggedInActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val view = fBinding.root
-        setContentView(view)
+        setContentView(fBinding.root)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

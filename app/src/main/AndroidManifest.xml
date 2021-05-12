@@ -21,8 +21,9 @@
             android:name=".activities.login.LoggedInActivity"
             android:label="@string/title_activity_logged_in_2nd"
             android:theme="@style/Theme.SQLiteApp.NoActionBar" />
-        <activity android:name=".activities.vaccdb.DatabaseActivity" />
+        <activity android:name=".activities.vaccdb.DatabaseVaccinationActivity" />
         <activity android:name=".activities.testdb.DatabaseTestActivity" />
+        <activity android:name=".activities.persondb.DatabasePersonActivity" />
     </application>
 
 </manifest>

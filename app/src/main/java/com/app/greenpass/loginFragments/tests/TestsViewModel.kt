@@ -7,15 +7,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.greenpass.database.AppDatabase
 import com.app.greenpass.database.toMap
+import com.app.greenpass.models.PersonModel
 import com.app.greenpass.models.TestModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 
 //MVVM architecture for fragments
 //functions, processes and interactions with model
@@ -24,6 +21,7 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
     private var qrCode: MutableLiveData<Bitmap> = MutableLiveData()
     private val description: MutableLiveData<String> = MutableLiveData()
     private val mText: MutableLiveData<String> = MutableLiveData()
+    private lateinit var person: PersonModel
     private var idnp: String? = null
 
 
@@ -38,30 +36,23 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
         description.value = "QR code for this test"
     }
 
-    fun getKey(key: String){
-        idnp = key
+    fun getKey(key: Int){
+        person = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
+        idnp = person.iDNP
     }
 
-    fun getDataForAdapter(handler: CoroutineExceptionHandler): MutableList<TestModel> {
+    fun getDataForAdapter(): MutableList<TestModel> {
+        val list = AppDatabase.getInstance(getApplication()).DaoTest().getAllTestForPerson(person.hashCode())
         val toRet = ArrayList<TestModel>()
-        runBlocking (handler){
-            val get = async(Dispatchers.Default) {
-                AppDatabase.getInstance(getApplication()).DaoTest().getAllTestForPerson(idnp)
-            }
-            for (t in get.await()){
-                toRet.add(t.toMap())
-            }
+        for (t in list){
+            toRet.add(t.toMap())
         }
         return toRet
     }
 
-    fun generateQrCode(clickedTest: TestModel?) {
+    fun generateQrCode(clickedTest: TestModel) {
         val testQr = "COVID-19 Test details\n" +
-                "IDNP: ${clickedTest?.idnp}\n" +
-                "Test date: ${clickedTest?.testDate}\n" +
-                "Test result: ${if (clickedTest?.testResult == true) "Positive" else "Negative"}\n" +
-                "Antibodies: " +
-                if (clickedTest?.isAntibodies == true) "Present" else "Absent"
+                clickedTest.toString()
         try {
             val writer = MultiFormatWriter()
             val bm = writer.encode(testQr, BarcodeFormat.QR_CODE, 350, 350)

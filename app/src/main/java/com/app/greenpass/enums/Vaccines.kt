@@ -1,14 +1,23 @@
 package com.app.greenpass.enums
 
-//input vaccine types here
-enum class Vaccines(val t : Int) {
-    AstroZeneca(1),
-    Pfizer(2),
-    SputnikV(3),
-    None(-1);
-    companion object{
-        fun fromInt(value: Int) = values().first { it.t == value}
-    }
+import java.util.*
 
+//input vaccine types here
+@Suppress("unused")
+enum class Vaccines(val t : Int) {
+    ASTROZENECA(1),
+    PFIZER(2),
+    SPUTNIKV(3),
+    NONE(-1);
+    companion object{
+        fun fromInt(value: Int) = values().first { it.t == value }
+        fun getValue(incoming: String): Vaccines {
+            return try {
+                valueOf(incoming.toUpperCase(Locale.ROOT))
+            } catch (e: IllegalArgumentException){
+                NONE
+            }
+        }
+    }
 }
 

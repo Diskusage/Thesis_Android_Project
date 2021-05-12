@@ -9,16 +9,16 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.app.greenpass.database.AppDatabase
 import com.app.greenpass.databinding.ListRowBinding
-import com.app.greenpass.models.PersonModel
+import com.app.greenpass.models.VaccinationModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class CustomPersonModelAdapter(private val dataSet: MutableList<PersonModel>, private val con: Context):
-        RecyclerView.Adapter<CustomPersonModelAdapter.ViewHolder>()  {
+//adapter to demonstrate all vaccination entries in the database with RecyclerView list
+class CustomVaccinationModelAdapter(private val dataSet: MutableList<VaccinationModel>, private val con: Context) :
+        RecyclerView.Adapter<CustomVaccinationModelAdapter.ViewHolder>() {
     private val handler = CoroutineExceptionHandler{ _, exception ->
-        Toast.makeText(con, "Person adapter coroutine error: $exception", Toast.LENGTH_SHORT).show()
+        Toast.makeText(con, "Vaccination adapter coroutine error: $exception", Toast.LENGTH_SHORT).show()
     }
     /**
      * Provide a reference to the type of views that you are using
@@ -45,14 +45,9 @@ class CustomPersonModelAdapter(private val dataSet: MutableList<PersonModel>, pr
         viewHolder.btn.setOnClickListener {
             runBlocking(handler) {
                 fun db() = launch {
-                    AppDatabase.getInstance(con).DaoPerson().deletePerson(dataSet[position].hashCode())
+                    val dif = AppDatabase.getInstance(con).DaoVaccinations().getIdForDeletion(dataSet[position].owner)[0]
+                    AppDatabase.getInstance(con).DaoVaccinations().deletePerson(position+dif)
                     dataSet.removeAt(position)
-                }
-                launch(Dispatchers.Default) {
-                    AppDatabase.getInstance(con).DaoTest().deleteAllByPerson(dataSet[position].hashCode())
-                }
-                launch(Dispatchers.Default) {
-                    AppDatabase.getInstance(con).DaoVaccinations().deleteFromPerson(dataSet[position].hashCode())
                 }
                 db().join()
                 notifyDataSetChanged()
@@ -62,4 +57,5 @@ class CustomPersonModelAdapter(private val dataSet: MutableList<PersonModel>, pr
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
+
 }

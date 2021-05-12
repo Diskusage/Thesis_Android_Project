@@ -28,13 +28,13 @@ class GenerateColoredRecycler(private val dataSet: List<TestModel> = arrayListOf
 
         override fun onClick(v: View?) {
             clickListener?.onPositionClicked(adapterPosition)
+
         }
 
         fun onBind(dataSet: TestModel) {
             // Get element from your dataset at this position and replace the
             // contents of the view with that element
-            binding.textViewResult.text = if (dataSet.testResult) "Positive" else "Negative"
-
+            binding.textViewResult.text = if (dataSet.testResult) "POSITIVE" else "NEGATIVE"
             binding.textViewResult.setTextColor(
                     if (dataSet.testResult) 0xD3E61405.toInt()
                     else 0xBE0F9E27.toInt()

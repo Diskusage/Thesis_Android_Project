@@ -25,7 +25,7 @@
         android:id="@+id/rowButtonQr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/generate"
+        android:text="@string/delete"
         android:textSize="12sp"
-        app:backgroundTint="#3E4481" />
+        app:backgroundTint="#C51B1B" />
 </LinearLayout>

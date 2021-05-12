@@ -3,27 +3,23 @@ package com.app.greenpass.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface DaoPerson {
-    @Query("SELECT * FROM personvaccinations WHERE PERSON_IDNP = :idnp ORDER BY PERSON_DATE DESC LIMIT 1")
-    fun getLastRecordForPerson(idnp: String?): PersonVaccinations?
 
-    @Query("SELECT * FROM personvaccinations WHERE PERSON_IDNP = :idnp")
-    fun getRecordsForPerson(idnp: String?): MutableList<PersonVaccinations>
+    @Update
+    fun updatePerson(personModel: People)
 
-    @Query("SELECT * FROM personvaccinations")
-    fun getAllRecords(): MutableList<PersonVaccinations>
+    @Query("SELECT * FROM people WHERE personCode = :code LIMIT 1")
+    fun getPerson(code: Int): People
 
-    @Query("SELECT CASE WHEN EXISTS (SELECT * FROM personvaccinations WHERE PERSON_IDNP = :idnp) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END")
-    fun checkLogin(idnp: String?): Boolean
+    @Query("SELECT * FROM people")
+    fun getAllRecords(): List<People>
 
-    @Query("DELETE FROM personvaccinations WHERE personalCode = :personModel")
-    fun deletePerson(personModel: String)
+    @Query("DELETE FROM people WHERE personCode = :personModel")
+    fun deletePerson(personModel: Int)
 
     @Insert
-    fun addPerson(personModel: PersonVaccinations)
-
-
-
+    fun addPerson(personModel: People)
 }

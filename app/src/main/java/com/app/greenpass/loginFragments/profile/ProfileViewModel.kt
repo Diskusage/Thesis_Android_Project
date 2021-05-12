@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.greenpass.database.AppDatabase
 import com.app.greenpass.database.toMap
+import com.app.greenpass.models.PersonModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.journeyapps.barcodescanner.BarcodeEncoder
@@ -25,9 +26,12 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private val sCode: MutableLiveData<Bitmap> = MutableLiveData()
     private val fName: MutableLiveData<String> = MutableLiveData()
     private val sName: MutableLiveData<String> = MutableLiveData()
+    private val pCode: MutableLiveData<String> = MutableLiveData()
     private val iDnp: MutableLiveData<String> = MutableLiveData()
+    private lateinit var person: PersonModel
 
-
+    val persCode: LiveData<String>
+        get() = pCode
     val firstCode: LiveData<Bitmap>
         get() = fCode
     val secondCode: LiveData<Bitmap>
@@ -48,52 +52,49 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         fText.value = "No tests found"
     }
 
-    fun getKey(key: String, key1: String?, key2: String?){
-        iDnp.value = key
-        fName.value = key1
-        sName.value = key2
+    fun getKey(key: Int){
+        person = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
+        iDnp.postValue(person.iDNP)
+        fName.postValue(person.firstName)
+        sName.postValue(person.secondName)
+        pCode.postValue(person.hashCode().toString())
     }
 
     fun generateQrCodes(handler: CoroutineExceptionHandler) {
         runBlocking(handler) {
             val jobOne = async(Dispatchers.Default) {
-                AppDatabase.getInstance(getApplication()).DaoTest().getLastTestForPerson(iDnp.value)?.toMap()
+                val lastTest = AppDatabase.getInstance(getApplication()).DaoTest().getLastTestForPerson(person.hashCode())
+                lastTest?.toMap()
             }
             val jobTwo = async(Dispatchers.Default) {
-                AppDatabase.getInstance(getApplication()).DaoPerson().getLastRecordForPerson(iDnp.value)?.toMap()
+                val lastVaccination = AppDatabase.getInstance(getApplication()).DaoVaccinations().getLastVaccination(person.hashCode())
+                lastVaccination?.toMap()
             }
-            var testQr:String ?= null
-            var secondQr:String ?= null
+            var testQr:String? = null
+            var secondQr:String? = null
             if (jobTwo.await() != null) {
-                fName.value = jobTwo.await()?.firstName
-                sName.value = jobTwo.await()?.secondName
-                testQr = "COVID-19 Vaccination details\n" +
-                        "IDNP: ${iDnp.value}\n" +
-                        "Vaccine type: ${jobTwo.await()?.type}\n" +
-                        "Vaccination date: ${jobTwo.await()?.vaccDate}"
+                 testQr = "COVID-19 VACCINATION DETAILS:\n" +
+                        jobTwo.await().toString()
             }
-            if (jobOne.await() != null) {
+            if (jobOne.await() != null){
                 secondQr = "COVID-19 Test details\n" +
-                        "IDNP: ${iDnp.value}\n" +
-                        "Test date: ${jobOne.await()?.testDate}\n" +
-                        "Test result: ${if (jobOne.await()?.testResult == true) "Positive" else "Negative"}\n" +
-                        "Antibodies: "+
-                        if (jobOne.await()?.isAntibodies == true) "Present" else "Absent"
+                        jobOne.await().toString()
             }
             val writer = MultiFormatWriter()
             val bce = BarcodeEncoder()
-            if (testQr != null) {
+            if (testQr != null){
                 val bm1 = writer.encode(testQr, BarcodeFormat.QR_CODE, 300, 300)
                 val bitmap = bce.createBitmap(bm1)
                 fCode.value = bitmap
                 mText.value = "Latest vaccine QR code"
             }
-            if (secondQr != null) {
+            if (secondQr != null){
                 val bm2 = writer.encode(secondQr, BarcodeFormat.QR_CODE, 300, 300)
                 val bitmap2 = bce.createBitmap(bm2)
                 sCode.value = bitmap2
                 fText.value = "Latest test QR code"
             }
+
         }
     }
 }

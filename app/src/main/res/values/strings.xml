@@ -3,13 +3,13 @@
     <string name="PersonName">First name</string>
     <string name="SecondName">Second name</string>
     <string name="LoginBtn">Login</string>
-    <string name="GoToDatabase">To database</string>
-    <string name="DBase_welcome">Database management screen</string>
+    <string name="GoToDatabase">To vaccinations</string>
+    <string name="DBase_welcome">Person database management screen</string>
     <string name="DBase_test_welcome">Test database management screen</string>
     <string name="Antibodies">Antibodies detected</string>
     <string name="ToTests">To tests</string>
     <string name="IDNPNumber">IDNP</string>
-    <string name="vacc">Vaccine name (optional for adding)</string>
+    <string name="vacc">Vaccine name</string>
     <string name="title_activity_logged_in_2nd">Logged_in_2nd</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -36,4 +36,11 @@
     <string name="first_name">First name:</string>
     <string name="second_name">Second name:</string>
     <string name="idnp">IDNP:</string>
+    <string name="vaccination_database_management_screen">Vaccination database management screen</string>
+    <string name="personal_code">Personal code</string>
+    <string name="laboratory_name">Laboratory name</string>
+    <string name="vaccine_series">Vaccine series</string>
+    <string name="vaccination_date">Vaccination date</string>
+    <string name="pCode_view">Personal code:</string>
+    <string name="to_person_database">To person database</string>
 </resources>
