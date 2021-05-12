@@ -45,6 +45,9 @@ class DatabaseVaccinationViewModel (application: Application): AndroidViewModel(
         ) {
             return "Fill in all the fields correctly"
         }
+        if (AppDatabase.getInstance(getApplication()).DaoPerson().checkIfExists(code.toInt()) == 0){
+            return "There is no such person"
+        }
         return null
     }
 

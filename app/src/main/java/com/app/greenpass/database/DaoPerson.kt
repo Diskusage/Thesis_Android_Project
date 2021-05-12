@@ -20,6 +20,9 @@ interface DaoPerson {
     @Query("DELETE FROM people WHERE personCode = :personModel")
     fun deletePerson(personModel: Int)
 
+    @Query("SELECT CASE WHEN EXISTS(SELECT * FROM people WHERE :code = personCode) THEN 1 ELSE 0 END")
+    fun checkIfExists(code: Int): Int
+
     @Insert
     fun addPerson(personModel: People)
 }

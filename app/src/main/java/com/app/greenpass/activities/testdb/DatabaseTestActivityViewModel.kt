@@ -36,6 +36,9 @@ class DatabaseTestActivityViewModel(application: Application): AndroidViewModel(
         if (idnp.isEmpty() || date.isEmpty()) {
             return "Fill in all the fields"
         }
+        if (AppDatabase.getInstance(getApplication()).DaoPerson().checkIfExists(idnp.toInt()) == 0){
+            return "There is no such person"
+        }
         return null
     }
 

@@ -40,7 +40,7 @@ open class DatabaseTestActivity : AppCompatActivity() {
         binding.btnTestAdd.setOnClickListener {
             val checkFields = databaseTestActivityViewModel.checkFields(
                     binding.databaseTestIDNP.text.toString(),
-                    binding.databaseTestDate.text.toString()
+                    binding.databaseTestDate.text.toString(),
             )
             if (checkFields != null){
                 Toast.makeText(this, checkFields, Toast.LENGTH_SHORT).show()

@@ -32,6 +32,11 @@ open class ProfileView : Fragment() {
                               container: ViewGroup?, savedInstanceState: Bundle?): View {
         mBinding = FragmentProfileBinding.inflate(inflater)
 
+        profileViewModel.persCode.observe(
+                viewLifecycleOwner,
+                {s: String? -> mBinding.idnpGraph2.text = s }
+        )
+
         profileViewModel.firstCode.observe(
                 viewLifecycleOwner,
                 {s: Bitmap? -> mBinding.qrCode.setImageBitmap(s)}
