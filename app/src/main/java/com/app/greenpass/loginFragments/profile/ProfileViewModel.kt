@@ -2,9 +2,12 @@ package com.app.greenpass.loginFragments.profile
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.app.greenpass.R
 import com.app.greenpass.database.AppDatabase
 import com.app.greenpass.database.toMap
 import com.app.greenpass.models.PersonModel
@@ -19,9 +22,10 @@ import kotlinx.coroutines.runBlocking
 //MVVM architecture for fragments
 //functions, processes and interactions with model
 //to transfer data back to view
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
-    private val mText: MutableLiveData<String> = MutableLiveData()
-    private val fText: MutableLiveData<String> = MutableLiveData()
+    private val mText: MutableLiveData<Int> = MutableLiveData()
+    private val fText: MutableLiveData<Int> = MutableLiveData()
     private val fCode: MutableLiveData<Bitmap> = MutableLiveData()
     private val sCode: MutableLiveData<Bitmap> = MutableLiveData()
     private val fName: MutableLiveData<String> = MutableLiveData()
@@ -36,9 +40,9 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         get() = fCode
     val secondCode: LiveData<Bitmap>
         get() = sCode
-    val text: LiveData<String>
+    val text: LiveData<Int>
         get() = mText
-    val text2: LiveData<String>
+    val text2: LiveData<Int>
         get() = fText
     val fNameGraph: LiveData<String>
         get() = fName
@@ -47,12 +51,9 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     val iDnpGraph: LiveData<String>
         get() = iDnp
 
-    init {
-        mText.value = "No vaccinations found"
-        fText.value = "No tests found"
-    }
-
     fun getKey(key: Int){
+        mText.postValue(R.string.no_vaccs)
+        fText.postValue(R.string.no_tests)
         person = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
         iDnp.postValue(person.iDNP)
         fName.postValue(person.firstName)
@@ -73,11 +74,11 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             var testQr:String? = null
             var secondQr:String? = null
             if (jobTwo.await() != null) {
-                 testQr = "COVID-19 VACCINATION DETAILS:\n" +
+                 testQr = getApplication<Application>().resources.getString(R.string.vacc_details) +
                         jobTwo.await().toString()
             }
             if (jobOne.await() != null){
-                secondQr = "COVID-19 Test details\n" +
+                secondQr = getApplication<Application>().resources.getString(R.string.test_details) +
                         jobOne.await().toString()
             }
             val writer = MultiFormatWriter()
@@ -86,15 +87,16 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 val bm1 = writer.encode(testQr, BarcodeFormat.QR_CODE, 300, 300)
                 val bitmap = bce.createBitmap(bm1)
                 fCode.value = bitmap
-                mText.value = "Latest vaccine QR code"
+                mText.value = R.string.latest_vacc_qr
             }
             if (secondQr != null){
                 val bm2 = writer.encode(secondQr, BarcodeFormat.QR_CODE, 300, 300)
                 val bitmap2 = bce.createBitmap(bm2)
                 sCode.value = bitmap2
-                fText.value = "Latest test QR code"
+                fText.value = R.string.latest_test_qr
             }
 
         }
     }
 }
+//TODO fix qr code sizes

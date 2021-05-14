@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.app.greenpass.R
 import com.app.greenpass.database.AppDatabase
 import com.app.greenpass.database.toMap
 import com.app.greenpass.models.PersonModel
@@ -19,24 +20,22 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 //to transfer data back to view
 class TestsViewModel(application: Application) : AndroidViewModel(application) {
     private var qrCode: MutableLiveData<Bitmap> = MutableLiveData()
-    private val description: MutableLiveData<String> = MutableLiveData()
-    private val mText: MutableLiveData<String> = MutableLiveData()
+    private val description: MutableLiveData<Int> = MutableLiveData()
+    private val mText: MutableLiveData<Int> = MutableLiveData()
     private lateinit var person: PersonModel
     private var idnp: String? = null
 
 
-    val text: LiveData<String>
+    val text: LiveData<Int>
         get() = mText
     val qr: LiveData<Bitmap>
         get() = qrCode
-    val desc: LiveData<String>
+    val desc: LiveData<Int>
         get() = description
-    init {
-        mText.value = "Test history"
-        description.value = "QR code for this test"
-    }
 
     fun getKey(key: Int){
+        mText.postValue(R.string.tHistory)
+        description.postValue(R.string.this_test)
         person = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
         idnp = person.iDNP
     }
@@ -51,7 +50,7 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun generateQrCode(clickedTest: TestModel) {
-        val testQr = "COVID-19 Test details\n" +
+        val testQr = getApplication<Application>().resources.getString(R.string.test_details) +
                 clickedTest.toString()
         try {
             val writer = MultiFormatWriter()

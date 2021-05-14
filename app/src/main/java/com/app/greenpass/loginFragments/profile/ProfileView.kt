@@ -1,6 +1,7 @@
 package com.app.greenpass.loginFragments.profile
 
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -8,10 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.app.greenpass.databinding.FragmentProfileBinding
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 //MVVM architecture for fragments
 //a profile view, consists of layout bindings and
@@ -49,12 +54,12 @@ open class ProfileView : Fragment() {
 
         profileViewModel.text2.observe(
                 viewLifecycleOwner,
-                { s: String? -> mBinding.textTest.text = s }
+                { s: Int -> mBinding.textTest.text = resources.getString(s) }
         )
 
         profileViewModel.text.observe(
                 viewLifecycleOwner,
-                { s: String? -> mBinding.textHome.text = s }
+                { s: Int -> mBinding.textHome.text = resources.getString(s) }
         )
 
         profileViewModel.fNameGraph.observe(
@@ -74,10 +79,12 @@ open class ProfileView : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onResume() {
         super.onResume()
         GlobalScope.launch(Dispatchers.Main) {
             profileViewModel.generateQrCodes(handler)
         }
     }
+
 }

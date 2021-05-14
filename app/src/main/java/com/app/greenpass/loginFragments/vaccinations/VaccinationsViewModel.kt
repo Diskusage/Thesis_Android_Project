@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.app.greenpass.R
 import com.app.greenpass.database.AppDatabase
 import com.app.greenpass.database.toMap
 import com.app.greenpass.models.PersonModel
@@ -18,31 +19,28 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 //functions, processes and interactions with model
 //to transfer data back to view
 class VaccinationsViewModel(application: Application) : AndroidViewModel(application) {
-    private val mText: MutableLiveData<String> = MutableLiveData()
-    private val descText: MutableLiveData<String> = MutableLiveData()
+    private val mText: MutableLiveData<Int> = MutableLiveData()
+    private val descText: MutableLiveData<Int> = MutableLiveData()
     private var qrPopup: MutableLiveData<Bitmap> = MutableLiveData()
     private var idnp: String? = null
     private lateinit var person: PersonModel
 
-    val desc: LiveData<String>
+    val desc: LiveData<Int>
         get() = descText
     val qr: LiveData<Bitmap>
         get() = qrPopup
-    val text: LiveData<String>
+    val text: LiveData<Int>
         get() = mText
 
-    init {
-        mText.value = "History of vaccinations"
-        descText.value = "QR code for this vaccination"
-    }
-
     fun getKey(key: Int){
+        mText.postValue(R.string.vHistory)
+        descText.postValue(R.string.this_vacc)
         person = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
         idnp = person.iDNP
     }
 
     fun generateQrCode(vaccination: VaccinationModel){
-        val qrCode = "COVID-19 Vaccination details\n" +
+        val qrCode = getApplication<Application>().resources.getString(R.string.vacc_details) +
                 vaccination.toString()
         try{
             val writer = MultiFormatWriter()

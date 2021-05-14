@@ -15,6 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            style="@style/HeaderBar"
             android:background="#3E4481"
             app:popupTheme="@style/Theme.SQLiteApp.PopupOverlay" />
 

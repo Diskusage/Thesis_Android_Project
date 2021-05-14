@@ -3,10 +3,14 @@ package com.app.greenpass.activities.main
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
+import android.text.Editable
 import android.util.Log
+import android.view.Menu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.app.greenpass.BuildConfig
+import com.app.greenpass.R
+import com.app.greenpass.activities.locale.BaseActivity
 import com.app.greenpass.activities.login.LoggedInActivity
 import com.app.greenpass.activities.persondb.DatabasePersonActivity
 import com.app.greenpass.activities.testdb.DatabaseTestActivity
@@ -16,7 +20,7 @@ import kotlinx.coroutines.*
 
 
 //the first activity you see upon starting the app,
-open class MainActivity : AppCompatActivity() {
+open class MainActivity : BaseActivity() {
     //use binding for more efficient layout control
     private lateinit var mBinding: ActivityMainBinding
     private val binding get() = mBinding
@@ -66,5 +70,24 @@ open class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity, DatabasePersonActivity::class.java)
             startActivity(intent)
         }
+
+
+        if(BuildConfig.DEBUG){
+            binding.etFirstName.text = Editable.Factory.getInstance().newEditable("d")
+            binding.etSecondName.text = Editable.Factory.getInstance().newEditable( "b")
+            binding.etIDNP.text =Editable.Factory.getInstance().newEditable( "1234567890122")
+        }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_activity, menu)
+        return true
+    }
+    //TODO language in main menu
+    //TODO database data translations where possible
+    override fun onRestart() {
+        super.onRestart()
+        recreate()
+    }
+
 }

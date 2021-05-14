@@ -29,7 +29,7 @@ open class TestsView : Fragment() {
 
         testsViewModel.text.observe(
                 viewLifecycleOwner,
-                { s -> mBinding.testsText.text = s }
+                { s -> mBinding.testsText.text = resources.getString(s) }
         )
         return binding.root
 
@@ -49,7 +49,7 @@ open class TestsView : Fragment() {
                     override fun onPositionClicked(i: Int) {
                         testsViewModel.desc.observe(
                                 viewLifecycleOwner,
-                                { s -> mBinding.desc.text = s }
+                                { s -> mBinding.desc.text = resources.getString(s) }
                         )
 
                         testsViewModel.qr.observe(

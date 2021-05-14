@@ -28,7 +28,7 @@ open class VaccinationsView : Fragment() {
 
         vaccinationsViewModel.text.observe(
                 viewLifecycleOwner,
-                { s -> mBinding.galleryText.text = s }
+                { s -> mBinding.galleryText.text = resources.getString(s) }
         )
 
         return binding.root
@@ -47,7 +47,7 @@ open class VaccinationsView : Fragment() {
                     override fun onPositionClicked(i: Int) {
                         vaccinationsViewModel.desc.observe(
                                 viewLifecycleOwner,
-                                { s -> mBinding.desc.text = s }
+                                { s -> mBinding.desc.text = resources.getString(s) }
                         )
 
                         vaccinationsViewModel.qr.observe(

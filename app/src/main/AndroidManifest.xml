@@ -3,14 +3,14 @@
     package="com.app.greenpass">
 
     <application
-        android:name="androidx.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:configChanges="layoutDirection|locale"
         android:theme="@style/Theme.SQLiteApp">
-        <activity android:name=".activities.main.MainActivity">
+        <activity android:name=".activities.main.MainActivity" android:configChanges="layoutDirection|locale">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,10 +20,20 @@
         <activity
             android:name=".activities.login.LoggedInActivity"
             android:label="@string/title_activity_logged_in_2nd"
+            android:configChanges="layoutDirection|locale"
             android:theme="@style/Theme.SQLiteApp.NoActionBar" />
-        <activity android:name=".activities.vaccdb.DatabaseVaccinationActivity" />
-        <activity android:name=".activities.testdb.DatabaseTestActivity" />
-        <activity android:name=".activities.persondb.DatabasePersonActivity" />
+        <activity
+            android:name=".activities.vaccdb.DatabaseVaccinationActivity"
+            android:configChanges="layoutDirection|locale"
+            />
+        <activity
+            android:name=".activities.testdb.DatabaseTestActivity"
+            android:configChanges="layoutDirection|locale"
+            />
+        <activity
+            android:name=".activities.persondb.DatabasePersonActivity"
+            android:configChanges="layoutDirection|locale"
+            />
     </application>
 
 </manifest>
