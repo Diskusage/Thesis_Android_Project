@@ -8,9 +8,6 @@ import androidx.room.Update
 @Dao
 interface DaoPerson {
 
-    @Update
-    fun updatePerson(personModel: People)
-
     @Query("SELECT * FROM people WHERE personCode = :code LIMIT 1")
     fun getPerson(code: Int): People
 
