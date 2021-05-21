@@ -11,22 +11,18 @@ import kotlinx.coroutines.async
 
 class MainActivityViewModel(application: Application): AndroidViewModel(application) {
 
-    suspend fun onClickedLogin(name: String, sName: String, idnp: String, handler: CoroutineExceptionHandler)
+    suspend fun onClickedLogin(userData: ArrayList<String>, handler: CoroutineExceptionHandler)
     : PersonModel?{
-        if (
-                name.isEmpty() ||
-                sName.isEmpty() ||
-                idnp.isEmpty()
-        ) {
+        if (userData.any { it.isEmpty() }){
             return null
         }
         return try {
             val job = viewModelScope.async(handler) {
                 AppDatabase
-                        .getInstance(getApplication())
-                        .DaoPerson()
-                        .getPerson(PersonModel(name, sName, idnp).hashCode())
-                        .toMap()
+                    .getInstance(getApplication())
+                    .DaoPerson()
+                    .getPerson(PersonModel(userData[0], userData[1], userData[2]).hashCode())
+                    .toMap()
             }
             job.await()
         } catch (e: Exception){

@@ -19,24 +19,30 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 //functions, processes and interactions with model
 //to transfer data back to view
 class VaccinationsViewModel(application: Application) : AndroidViewModel(application) {
-    private val mText: MutableLiveData<Int> = MutableLiveData()
-    private val descText: MutableLiveData<Int> = MutableLiveData()
-    private var qrPopup: MutableLiveData<Bitmap> = MutableLiveData()
-    private var idnp: String? = null
-    private lateinit var person: PersonModel
-
-    val desc: LiveData<Int>
-        get() = descText
-    val qr: LiveData<Bitmap>
-        get() = qrPopup
-    val text: LiveData<Int>
-        get() = mText
-
+    private val viewResult : MutableLiveData<ViewResult> = MutableLiveData()
+    val viewsResult : LiveData<ViewResult>
+        get() = viewResult
+    private lateinit var personModel: PersonModel
     fun getKey(key: Int){
-        mText.postValue(R.string.vHistory)
-        descText.postValue(R.string.this_vacc)
-        person = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
-        idnp = person.iDNP
+        personModel = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
+        viewResult.postValue(ViewResult.Opened(
+            R.string.vHistory,
+            AppDatabase
+                .getInstance(getApplication())
+                .DaoVaccinations()
+                .getRecordsForPerson(personModel.hashCode())
+                .map { it.toMap() }
+        ))
+    }
+    fun updateView(){
+        viewResult.postValue(ViewResult.Opened(
+            R.string.vHistory,
+            AppDatabase
+                .getInstance(getApplication())
+                .DaoVaccinations()
+                .getRecordsForPerson(personModel.hashCode())
+                .map { it.toMap() }
+        ))
     }
 
     fun generateQrCode(vaccination: VaccinationModel){
@@ -44,22 +50,24 @@ class VaccinationsViewModel(application: Application) : AndroidViewModel(applica
                 vaccination.toString()
         try{
             val writer = MultiFormatWriter()
-            val bm = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500)
             val bce = BarcodeEncoder()
-            val bitmap = bce.createBitmap(bm)
-            qrPopup.value = bitmap
+            viewResult.postValue(ViewResult.Generated(
+                R.string.this_vacc,
+                bce.createBitmap(writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500))
+            ))
         } catch (e: WriterException){
             e.printStackTrace()
         }
     }
 
-
-    fun getDataForAdapter(): MutableList<VaccinationModel> {
-        val list = AppDatabase.getInstance(getApplication()).DaoVaccinations().getRecordsForPerson(person.hashCode())
-        val toRet = ArrayList<VaccinationModel>()
-        for (t in list){
-            toRet.add(t.toMap())
-        }
-        return toRet
+    sealed class ViewResult {
+        class  Generated(
+            val testText: Int,
+            val testMap: Bitmap?,
+        ) : ViewResult()
+        class  Opened(
+            val text: Int,
+            val list: List<VaccinationModel>,
+        ) : ViewResult()
     }
 }

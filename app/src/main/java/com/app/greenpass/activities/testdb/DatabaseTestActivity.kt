@@ -1,8 +1,6 @@
 package com.app.greenpass.activities.testdb
 
 import android.os.Bundle
-import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -10,21 +8,17 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.app.greenpass.adapters.CustomTestModelAdapter
 import com.app.greenpass.databinding.DatabaseTestManagementScreenBinding
 import com.app.greenpass.models.TestModel
-import kotlinx.coroutines.*
+import com.app.greenpass.util.CoroutineHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 //same thing as DatabaseActivity, but for working with another db table
-open class DatabaseTestActivity : AppCompatActivity() {
+class DatabaseTestActivity : AppCompatActivity() {
     //use binding for more efficient layout control
     private lateinit var mBinding: DatabaseTestManagementScreenBinding
     private val binding get() = mBinding
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        if (Looper.myLooper() == null) {
-            Looper.prepare()
-            Looper.loop()
-        }
-        Log.i("Coroutine:", "Error", exception)
-        Toast.makeText(this, "Error while adding", Toast.LENGTH_SHORT).show()
-    }
+    private val handler = CoroutineHelper(this).handler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

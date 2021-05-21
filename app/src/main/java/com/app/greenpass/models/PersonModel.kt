@@ -3,7 +3,7 @@ package com.app.greenpass.models
 import java.util.*
 import kotlin.math.absoluteValue
 
-class PersonModel(var firstName: String, var secondName: String, var iDNP: String) {
+class PersonModel(var firstName: String, var secondName: String, var iDNP: String){
 
     override fun toString(): String {
         return this.firstName.toUpperCase(Locale.ROOT) + " " +

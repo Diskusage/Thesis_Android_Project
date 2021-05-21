@@ -25,43 +25,42 @@ open class VaccinationsView : Fragment() {
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?, savedInstanceState: Bundle?): View {
         mBinding = FragmentVaccinationsBinding.inflate(inflater)
-
-        vaccinationsViewModel.text.observe(
-                viewLifecycleOwner,
-                { s -> mBinding.galleryText.text = resources.getString(s) }
-        )
-
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        vaccinationsViewModel.viewsResult.observe(
+            viewLifecycleOwner,
+            { s -> when(s){
+                is VaccinationsViewModel.ViewResult.Opened -> s.apply {
+                    binding.galleryText.text = resources.getString(text)
+                    binding.vaccHistory.adapter = GenerateQrCodeAdapter(
+                        list,
+                        object : ClickListener {
+                            override fun onPositionClicked(i: Int) {
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    vaccinationsViewModel.generateQrCode(list[i])
+                                }
+                            }
+                        }
+                    )
+                    binding.vaccHistory.addItemDecoration(
+                        DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+                    )
+                }
+                is VaccinationsViewModel.ViewResult.Generated -> s.apply {
+                    binding.desc.text = resources.getString(testText)
+                    binding.imageView2.setImageBitmap(testMap)
+                }
+            } }
+        )
     }
 
     override fun onResume() {
         super.onResume()
-        showList()
+        vaccinationsViewModel.updateView()
+        binding.desc.text = null
+        binding.imageView2.setImageBitmap(null)
     }
 
-    private fun showList(){
-
-        mBinding.vaccHistory.adapter = GenerateQrCodeAdapter(
-                vaccinationsViewModel.getDataForAdapter(),
-                object : ClickListener {
-                    override fun onPositionClicked(i: Int) {
-                        vaccinationsViewModel.desc.observe(
-                                viewLifecycleOwner,
-                                { s -> mBinding.desc.text = resources.getString(s) }
-                        )
-
-                        vaccinationsViewModel.qr.observe(
-                                viewLifecycleOwner,
-                                { s -> mBinding.imageView2.setImageBitmap(s) }
-                        )
-                        GlobalScope.launch(Dispatchers.Main) {
-                            vaccinationsViewModel.generateQrCode(vaccinationsViewModel.getDataForAdapter()[i])
-                        }
-                    }
-                }
-        )
-        mBinding.vaccHistory.addItemDecoration(
-                DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        )
-    }
 }

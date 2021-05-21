@@ -19,47 +19,57 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 //functions, processes and interactions with model
 //to transfer data back to view
 class TestsViewModel(application: Application) : AndroidViewModel(application) {
-    private var qrCode: MutableLiveData<Bitmap> = MutableLiveData()
-    private val description: MutableLiveData<Int> = MutableLiveData()
-    private val mText: MutableLiveData<Int> = MutableLiveData()
-    private lateinit var person: PersonModel
-    private var idnp: String? = null
-
-
-    val text: LiveData<Int>
-        get() = mText
-    val qr: LiveData<Bitmap>
-        get() = qrCode
-    val desc: LiveData<Int>
-        get() = description
-
+    private val viewResult : MutableLiveData<ViewResult> = MutableLiveData()
+    val viewsResult : LiveData<ViewResult>
+        get() = viewResult
+    private lateinit var personModel: PersonModel
     fun getKey(key: Int){
-        mText.postValue(R.string.tHistory)
-        description.postValue(R.string.this_test)
-        person = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
-        idnp = person.iDNP
+        personModel = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
+        viewResult.postValue(ViewResult.Opened(
+            R.string.tHistory,
+            AppDatabase
+                .getInstance(getApplication())
+                .DaoTest()
+                .getAllTestForPerson(
+                    personModel.hashCode()
+                )
+                .map { it.toMap() }
+        ))
     }
-
-    fun getDataForAdapter(): MutableList<TestModel> {
-        val list = AppDatabase.getInstance(getApplication()).DaoTest().getAllTestForPerson(person.hashCode())
-        val toRet = ArrayList<TestModel>()
-        for (t in list){
-            toRet.add(t.toMap())
-        }
-        return toRet
+    fun updateView(){
+    viewResult.postValue(ViewResult.Opened(
+        R.string.tHistory,
+        AppDatabase
+            .getInstance(getApplication())
+            .DaoTest()
+            .getAllTestForPerson(
+                personModel.hashCode()
+            )
+            .map { it.toMap() }
+    ))
     }
-
     fun generateQrCode(clickedTest: TestModel) {
         val testQr = getApplication<Application>().resources.getString(R.string.test_details) +
                 clickedTest.toString()
         try {
             val writer = MultiFormatWriter()
-            val bm = writer.encode(testQr, BarcodeFormat.QR_CODE, 350, 350)
             val bce = BarcodeEncoder()
-            val bitmap = bce.createBitmap(bm)
-            qrCode.value = bitmap
+            viewResult.postValue(ViewResult.Generated(
+                R.string.this_test,
+                bce.createBitmap(writer.encode(testQr, BarcodeFormat.QR_CODE, 350, 350))
+            ))
         } catch (e: WriterException){
             e.printStackTrace()
         }
+    }
+    sealed class ViewResult {
+        class  Generated(
+            val testText: Int,
+            val testMap: Bitmap?,
+        ) : ViewResult()
+        class  Opened(
+            val text: Int,
+            val list: List<TestModel>,
+        ) : ViewResult()
     }
 }

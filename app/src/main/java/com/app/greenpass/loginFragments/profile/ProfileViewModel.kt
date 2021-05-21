@@ -14,89 +14,89 @@ import com.app.greenpass.models.PersonModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 //MVVM architecture for fragments
 //functions, processes and interactions with model
 //to transfer data back to view
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
-    private val mText: MutableLiveData<Int> = MutableLiveData()
-    private val fText: MutableLiveData<Int> = MutableLiveData()
-    private val fCode: MutableLiveData<Bitmap> = MutableLiveData()
-    private val sCode: MutableLiveData<Bitmap> = MutableLiveData()
-    private val fName: MutableLiveData<String> = MutableLiveData()
-    private val sName: MutableLiveData<String> = MutableLiveData()
-    private val pCode: MutableLiveData<String> = MutableLiveData()
-    private val iDnp: MutableLiveData<String> = MutableLiveData()
     private lateinit var person: PersonModel
-
-    val persCode: LiveData<String>
-        get() = pCode
-    val firstCode: LiveData<Bitmap>
-        get() = fCode
-    val secondCode: LiveData<Bitmap>
-        get() = sCode
-    val text: LiveData<Int>
-        get() = mText
-    val text2: LiveData<Int>
-        get() = fText
-    val fNameGraph: LiveData<String>
-        get() = fName
-    val sNameGraph: LiveData<String>
-        get() = sName
-    val iDnpGraph: LiveData<String>
-        get() = iDnp
+    private val viewResult : MutableLiveData<ViewResult> = MutableLiveData()
+    val viewsResult : LiveData<ViewResult>
+        get() = viewResult
 
     fun getKey(key: Int){
-        mText.postValue(R.string.no_vaccs)
-        fText.postValue(R.string.no_tests)
         person = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
-        iDnp.postValue(person.iDNP)
-        fName.postValue(person.firstName)
-        sName.postValue(person.secondName)
-        pCode.postValue(person.hashCode().toString())
+        updateView()
+    }
+
+    fun updateView(){
+        viewResult.postValue(ViewResult.Authorized(person))
     }
 
     fun generateQrCodes(handler: CoroutineExceptionHandler) {
         runBlocking(handler) {
-            val jobOne = async(Dispatchers.Default) {
-                val lastTest = AppDatabase.getInstance(getApplication()).DaoTest().getLastTestForPerson(person.hashCode())
-                lastTest?.toMap()
+            val jobOne = async(Dispatchers.IO) {
+                AppDatabase.getInstance(getApplication()).DaoTest().getLastTestForPerson(person.hashCode())?.toMap()
             }
-            val jobTwo = async(Dispatchers.Default) {
-                val lastVaccination = AppDatabase.getInstance(getApplication()).DaoVaccinations().getLastVaccination(person.hashCode())
-                lastVaccination?.toMap()
+            val jobTwo = async(Dispatchers.IO) {
+                AppDatabase.getInstance(getApplication()).DaoVaccinations().getLastVaccination(person.hashCode())?.toMap()
             }
-            var testQr:String? = null
-            var secondQr:String? = null
-            if (jobTwo.await() != null) {
-                 testQr = getApplication<Application>().resources.getString(R.string.vacc_details) +
+            val testQr:String? = if (jobTwo.await() != null)
+                getApplication<Application>().resources.getString(R.string.vacc_details) +
                         jobTwo.await().toString()
-            }
-            if (jobOne.await() != null){
-                secondQr = getApplication<Application>().resources.getString(R.string.test_details) +
+            else null
+            val secondQr:String? = if (jobOne.await() != null)
+                getApplication<Application>().resources.getString(R.string.test_details) +
                         jobOne.await().toString()
-            }
+            else null
             val writer = MultiFormatWriter()
             val bce = BarcodeEncoder()
-            if (testQr != null){
-                val bm1 = writer.encode(testQr, BarcodeFormat.QR_CODE, 300, 300)
-                val bitmap = bce.createBitmap(bm1)
-                fCode.value = bitmap
-                mText.value = R.string.latest_vacc_qr
-            }
-            if (secondQr != null){
-                val bm2 = writer.encode(secondQr, BarcodeFormat.QR_CODE, 300, 300)
-                val bitmap2 = bce.createBitmap(bm2)
-                sCode.value = bitmap2
-                fText.value = R.string.latest_test_qr
-            }
-
+            delay(500)
+            viewResult.postValue(
+                ViewResult.FinishLoad(
+                    Pair(
+                        secondQr?.let {
+                                ViewResult.LoadedFirst(
+                                    R.string.latest_test_qr,
+                                    bce.createBitmap(
+                                        writer.encode(
+                                            secondQr, BarcodeFormat.QR_CODE, 300, 300
+                                        )
+                                    )
+                                )
+                        },
+                        testQr?.let {
+                            ViewResult.LoadedSecond(
+                                R.string.latest_vacc_qr,
+                                bce.createBitmap(
+                                    writer.encode(
+                                        testQr, BarcodeFormat.QR_CODE, 300, 300
+                                    )
+                                )
+                            )
+                        }
+                    )
+                )
+            )
         }
     }
+
+    sealed class ViewResult {
+        class  FinishLoad(
+            val data: Pair<LoadedFirst?, LoadedSecond?>
+        ):ViewResult()
+        class  LoadedSecond(
+            val vaccText: Int,
+            val vaccMap: Bitmap?,
+        ) : ViewResult()
+        class  LoadedFirst(
+           val testText: Int,
+           val testMap: Bitmap?,
+        ) : ViewResult()
+        class  Authorized(
+           val person: PersonModel,
+        ) : ViewResult()
+    }
 }
-//TODO fix qr code sizes

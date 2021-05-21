@@ -47,9 +47,6 @@ class LoggedInActivity : BaseActivity(), PopupMenu.OnMenuItemClickListener  {
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
         vaccinationsViewModel = ViewModelProvider(this).get(VaccinationsViewModel::class.java)
         testsViewModel = ViewModelProvider(this).get(TestsViewModel::class.java)
-        val header = fBinding.navView.getHeaderView(0)
-        val name = header.findViewById<TextView>(R.id.text_title)
-        val subtitle = header.findViewById<TextView>(R.id.text_subtitle)
         GlobalScope.launch(Dispatchers.Default) {
             loggedInActivityViewModel.initFragments(
                     intent.extras,
@@ -59,9 +56,11 @@ class LoggedInActivity : BaseActivity(), PopupMenu.OnMenuItemClickListener  {
             )
         }
         GlobalScope.launch (Dispatchers.Default) {
-            val user = loggedInActivityViewModel.fetchPerson(intent.extras?.getInt("user")!!)
-            name.text = getString(R.string.nav_header_title, user.firstName, user.secondName)
-            subtitle.text = user.iDNP
+            val user = loggedInActivityViewModel.fetchPerson(intent.extras?.getInt("user"))
+            fBinding.navView.getHeaderView(0).findViewById<TextView>(R.id.text_title).text =
+                getString(R.string.nav_header_title, user?.firstName, user?.secondName)
+            fBinding.navView.getHeaderView(0).findViewById<TextView>(R.id.text_subtitle).text =
+                user?.iDNP
         }
         setSupportActionBar(binding.appBarLogin.toolbar)
         mAppBarConfiguration = AppBarConfiguration.Builder(

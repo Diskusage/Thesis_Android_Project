@@ -1,8 +1,6 @@
 package com.app.greenpass.activities.vaccdb
 
 import android.os.Bundle
-import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -11,23 +9,16 @@ import com.app.greenpass.adapters.CustomVaccinationModelAdapter
 import com.app.greenpass.databinding.DatabaseScreenBinding
 import com.app.greenpass.enums.Vaccines
 import com.app.greenpass.models.VaccinationModel
-import kotlinx.coroutines.CoroutineExceptionHandler
+import com.app.greenpass.util.CoroutineHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-open class DatabaseVaccinationActivity : AppCompatActivity() {
+class DatabaseVaccinationActivity : AppCompatActivity() {
     //use binding for more efficient layout control
     private lateinit var mBinding: DatabaseScreenBinding
     private val binding get() = mBinding
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        if (Looper.myLooper() == null){
-            Looper.prepare()
-            Looper.loop()
-        }
-        Log.i("Coroutine:", "Error", exception)
-        Toast.makeText(this, "Error while adding", Toast.LENGTH_SHORT).show()
-    }
+    private val handler = CoroutineHelper(this).handler
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

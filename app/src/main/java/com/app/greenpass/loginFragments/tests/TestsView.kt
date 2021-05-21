@@ -26,45 +26,43 @@ open class TestsView : Fragment() {
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?, savedInstanceState: Bundle?): View {
         mBinding = FragmentTestsBinding.inflate(inflater)
-
-        testsViewModel.text.observe(
-                viewLifecycleOwner,
-                { s -> mBinding.testsText.text = resources.getString(s) }
-        )
         return binding.root
 
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        testsViewModel.viewsResult.observe(
+            viewLifecycleOwner,
+            { s -> when(s){
+                is TestsViewModel.ViewResult.Opened -> s.apply {
+                    binding.testsText.text = resources.getString(text)
+                    binding.testsHistory.adapter = GenerateColoredRecycler(
+                        list,
+                        object : ClickListener {
+                            override fun onPositionClicked(i: Int) {
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    testsViewModel.generateQrCode(list[i])
+                                }
+                            }
+                        }
+                    )
+                    binding.testsHistory.addItemDecoration(
+                        DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+                    )
+                }
+                is TestsViewModel.ViewResult.Generated -> s.apply {
+                    binding.desc.text = resources.getString(testText)
+                    binding.imageViewTest.setImageBitmap(testMap)
+                }
+            } }
+        )
+    }
 
     override fun onResume() {
         super.onResume()
-        showList()
-    }
-
-    private fun showList(){
-
-        mBinding.testsHistory.adapter = GenerateColoredRecycler(
-                testsViewModel.getDataForAdapter(),
-                object : ClickListener {
-                    override fun onPositionClicked(i: Int) {
-                        testsViewModel.desc.observe(
-                                viewLifecycleOwner,
-                                { s -> mBinding.desc.text = resources.getString(s) }
-                        )
-
-                        testsViewModel.qr.observe(
-                                viewLifecycleOwner,
-                                { s -> mBinding.imageViewTest.setImageBitmap(s) }
-                        )
-                        GlobalScope.launch(Dispatchers.Main) {
-                            testsViewModel.generateQrCode(testsViewModel.getDataForAdapter()[i])
-                        }
-                    }
-                }
-        )
-        mBinding.testsHistory.addItemDecoration(
-                DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        )
+        testsViewModel.updateView()
+        binding.desc.text = null
+        binding.imageViewTest.setImageBitmap(null)
     }
 
 }

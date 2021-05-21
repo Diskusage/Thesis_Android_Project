@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.app.greenpass.database.AppDatabase
 import com.app.greenpass.database.toMap
 import com.app.greenpass.models.PersonModel
-import kotlinx.coroutines.CoroutineExceptionHandler
+import com.app.greenpass.util.CoroutineHelper
 import kotlinx.coroutines.launch
 
 class DatabasePersonActivityViewModel(application: Application): AndroidViewModel(application)   {
@@ -17,7 +17,9 @@ class DatabasePersonActivityViewModel(application: Application): AndroidViewMode
     val list: LiveData<MutableList<PersonModel>>
         get() = latestList
 
-    fun initList(handler: CoroutineExceptionHandler) {
+    private val handler = CoroutineHelper(getApplication()).handler
+
+    fun initList() {
         viewModelScope.launch(handler) {
             val list = AppDatabase.getInstance(getApplication()).DaoPerson().getAllRecords()
             val forAd = ArrayList<PersonModel>()
@@ -29,13 +31,17 @@ class DatabasePersonActivityViewModel(application: Application): AndroidViewMode
         }
     }
 
-    fun onAdd(handler: CoroutineExceptionHandler, model: PersonModel): Boolean{
+    fun addPerson(name: String, sname: String, idnp: String): Pair<Boolean, String?> {
+        return checkFields(name, sname, idnp)?.let { Pair(false, it) } ?: Pair(onAdd(PersonModel(name, sname, idnp)), null)
+    }
+
+    private fun onAdd(model: PersonModel): Boolean{
         val ret = addRoutine(model)
-        initList(handler)
+        initList()
         return ret
     }
 
-    fun checkFields(name: String, sName: String, idnp: String): String?{
+    private fun checkFields(name: String, sName: String, idnp: String): String?{
         if (idnp.isEmpty() || name.isEmpty() || sName.isEmpty()) {
             return "Fill in all the fields"
         }

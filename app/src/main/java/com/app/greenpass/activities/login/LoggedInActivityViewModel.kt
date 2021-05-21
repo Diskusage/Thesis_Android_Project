@@ -26,8 +26,8 @@ class LoggedInActivityViewModel(application: Application): AndroidViewModel(appl
         }
 
     }
-    fun fetchPerson(code: Int): PersonModel{
-        return AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(code).toMap()
+    fun fetchPerson(code: Int?): PersonModel?{
+        return code?.let { AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(it).toMap() }
     }
 
 }
