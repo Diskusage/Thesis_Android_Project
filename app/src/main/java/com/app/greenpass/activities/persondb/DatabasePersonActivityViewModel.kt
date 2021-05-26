@@ -21,13 +21,12 @@ class DatabasePersonActivityViewModel(application: Application): AndroidViewMode
 
     fun initList() {
         viewModelScope.launch(handler) {
-            val list = AppDatabase.getInstance(getApplication()).DaoPerson().getAllRecords()
-            val forAd = ArrayList<PersonModel>()
-            for (t in list){
-                forAd.add(t.toMap())
-            }
-            latestList.value = forAd
-
+            latestList.value = AppDatabase
+                .getInstance(getApplication())
+                .DaoPerson()
+                .getAllRecords()
+                .map { it.toMap() }
+                .toMutableList()
         }
     }
 

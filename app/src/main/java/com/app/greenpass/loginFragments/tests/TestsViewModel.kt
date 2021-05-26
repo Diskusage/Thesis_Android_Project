@@ -18,6 +18,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 //MVVM architecture for fragments
 //functions, processes and interactions with model
 //to transfer data back to view
+
 class TestsViewModel(application: Application) : AndroidViewModel(application) {
     private val viewResult : MutableLiveData<ViewResult> = MutableLiveData()
     val viewsResult : LiveData<ViewResult>
@@ -25,16 +26,6 @@ class TestsViewModel(application: Application) : AndroidViewModel(application) {
     private lateinit var personModel: PersonModel
     fun getKey(key: Int){
         personModel = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
-        viewResult.postValue(ViewResult.Opened(
-            R.string.tHistory,
-            AppDatabase
-                .getInstance(getApplication())
-                .DaoTest()
-                .getAllTestForPerson(
-                    personModel.hashCode()
-                )
-                .map { it.toMap() }
-        ))
     }
     fun updateView(){
     viewResult.postValue(ViewResult.Opened(

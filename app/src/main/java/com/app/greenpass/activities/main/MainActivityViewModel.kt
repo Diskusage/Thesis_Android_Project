@@ -11,7 +11,7 @@ import kotlinx.coroutines.async
 
 class MainActivityViewModel(application: Application): AndroidViewModel(application) {
 
-    suspend fun onClickedLogin(userData: ArrayList<String>, handler: CoroutineExceptionHandler)
+    suspend fun onClickedLogin(userData: List<String>, handler: CoroutineExceptionHandler)
     : PersonModel?{
         if (userData.any { it.isEmpty() }){
             return null

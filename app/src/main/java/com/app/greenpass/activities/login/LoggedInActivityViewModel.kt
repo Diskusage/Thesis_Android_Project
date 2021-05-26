@@ -14,18 +14,19 @@ import com.app.greenpass.models.PersonModel
 
 class LoggedInActivityViewModel(application: Application): AndroidViewModel(application) {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    fun initFragments(bundle: Bundle?,
-                      fViewModel: ProfileViewModel,
-                      sViewModel: VaccinationsViewModel,
-                      lViewModel: TestsViewModel){
-        val idnp = bundle?.getInt("user")
-        if (idnp != null) {
-            fViewModel.getKey(idnp)
-            sViewModel.getKey(idnp)
-            lViewModel.getKey(idnp)
+    fun initFragments(
+        bundle: Bundle?,
+        fViewModel: ProfileViewModel,
+        sViewModel: VaccinationsViewModel,
+        lViewModel: TestsViewModel
+    ) {
+        bundle?.getInt("user")?.let {
+            fViewModel.getKey(it)
+            sViewModel.getKey(it)
+            lViewModel.getKey(it)
         }
-
     }
+
     fun fetchPerson(code: Int?): PersonModel?{
         return code?.let { AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(it).toMap() }
     }

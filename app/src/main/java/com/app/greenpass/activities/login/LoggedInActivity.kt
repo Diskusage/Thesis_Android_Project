@@ -52,7 +52,7 @@ class LoggedInActivity : BaseActivity(), PopupMenu.OnMenuItemClickListener  {
                     intent.extras,
                     profileViewModel,
                     vaccinationsViewModel,
-                    testsViewModel
+                    testsViewModel,
             )
         }
         GlobalScope.launch (Dispatchers.Default) {

@@ -25,14 +25,6 @@ class VaccinationsViewModel(application: Application) : AndroidViewModel(applica
     private lateinit var personModel: PersonModel
     fun getKey(key: Int){
         personModel = AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(key).toMap()
-        viewResult.postValue(ViewResult.Opened(
-            R.string.vHistory,
-            AppDatabase
-                .getInstance(getApplication())
-                .DaoVaccinations()
-                .getRecordsForPerson(personModel.hashCode())
-                .map { it.toMap() }
-        ))
     }
     fun updateView(){
         viewResult.postValue(ViewResult.Opened(

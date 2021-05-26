@@ -7,12 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.app.greenpass.adapters.ClickListener
 import com.app.greenpass.adapters.GenerateColoredRecycler
 import com.app.greenpass.databinding.FragmentTestsBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 //MVVM architecture for fragments
 //a tests view, consists of layout bindings and
@@ -36,16 +32,7 @@ open class TestsView : Fragment() {
             { s -> when(s){
                 is TestsViewModel.ViewResult.Opened -> s.apply {
                     binding.testsText.text = resources.getString(text)
-                    binding.testsHistory.adapter = GenerateColoredRecycler(
-                        list,
-                        object : ClickListener {
-                            override fun onPositionClicked(i: Int) {
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    testsViewModel.generateQrCode(list[i])
-                                }
-                            }
-                        }
-                    )
+                    binding.testsHistory.adapter = GenerateColoredRecycler(list, testsViewModel)
                     binding.testsHistory.addItemDecoration(
                         DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
                     )

@@ -1,37 +1,36 @@
 package com.app.greenpass.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.greenpass.databinding.ListRowQrBinding
+import com.app.greenpass.loginFragments.vaccinations.VaccinationsViewModel
 import com.app.greenpass.models.VaccinationModel
-import java.lang.ref.WeakReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 //an adapter to demonstrate tests/vaccinations with button option,
 //has a callback for click events
-class GenerateQrCodeAdapter(private val dataSet: List<VaccinationModel> = arrayListOf(), private val listener: ClickListener) :
-        RecyclerView.Adapter<GenerateQrCodeAdapter.ViewHolder>() {
+class GenerateQrCodeAdapter(private val dataSet: List<VaccinationModel> = arrayListOf(), private val vaccinationsViewModel: VaccinationsViewModel) :
+        RecyclerView.Adapter<GenerateQrCodeAdapter.ViewHolder>()  {
 
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
-    class ViewHolder(private val binding: ListRowQrBinding, listener: ClickListener) : RecyclerView.ViewHolder(binding.root), View.OnClickListener{
-        private val listenerRef: WeakReference<ClickListener> = WeakReference(listener)
-        private val clickListener get() = listenerRef.get()
-
-        init {
-            // Define click listener for the ViewHolder's View.
-            binding.rowButtonQr.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?){
-            clickListener?.onPositionClicked(adapterPosition)
-        }
+    class ViewHolder(private val binding: ListRowQrBinding,
+                     private val vaccinationsViewModel: VaccinationsViewModel,
+                     private val list: List<VaccinationModel>)
+        : RecyclerView.ViewHolder(binding.root){
 
         fun onBind(dataSet: VaccinationModel){
             binding.textViewQr.text = dataSet.toString()
+            binding.rowButtonQr.setOnClickListener {
+                GlobalScope.launch(Dispatchers.Default) {
+                    vaccinationsViewModel.generateQrCode(list[adapterPosition])
+                }
+            }
         }
     }
 
@@ -39,7 +38,7 @@ class GenerateQrCodeAdapter(private val dataSet: List<VaccinationModel> = arrayL
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val inflater = LayoutInflater.from(viewGroup.context)
-        return ViewHolder(ListRowQrBinding.inflate(inflater, viewGroup, false), listener)
+        return ViewHolder(ListRowQrBinding.inflate(inflater, viewGroup, false), vaccinationsViewModel, dataSet)
     }
 
     // Replace the contents of a view (invoked by the layout manager)

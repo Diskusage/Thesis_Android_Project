@@ -27,14 +27,14 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = ActivityMainBinding.inflate(this.layoutInflater)
+        mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         val mainActivityViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         binding.btnLogin.setOnClickListener {
             runBlocking {
                 mainActivityViewModel.onClickedLogin(
-                    arrayListOf(
+                    listOf(
                         binding.etFirstName.text.toString(),
                         binding.etSecondName.text.toString(),
                         binding.etIDNP.text.toString(),
@@ -49,20 +49,15 @@ class MainActivity : BaseActivity() {
         }
         //go to database population screen
         binding.btnToDB.setOnClickListener {
-            val intent = Intent(this@MainActivity, DatabaseVaccinationActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this@MainActivity, DatabaseVaccinationActivity::class.java))
         }
         binding.btnToTestDb.setOnClickListener{
-            val intent = Intent(this@MainActivity, DatabaseTestActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this@MainActivity, DatabaseTestActivity::class.java))
         }
-
         binding.btnToPeople.setOnClickListener {
-            val intent = Intent(this@MainActivity, DatabasePersonActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this@MainActivity, DatabasePersonActivity::class.java))
         }
-
-
+        //quick login during debugging
         if(BuildConfig.DEBUG){
             binding.etFirstName.text = Editable.Factory.getInstance().newEditable("d")
             binding.etSecondName.text = Editable.Factory.getInstance().newEditable( "b")

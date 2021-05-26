@@ -55,4 +55,6 @@
     <string name="tHistory">Test history</string>
     <string name="vHistory">Vaccination history</string>
     <string name="locale_lang">Language: </string>
+    <string name="test_pos">Positive</string>
+    <string name="test_neg">Negative</string>
 </resources>

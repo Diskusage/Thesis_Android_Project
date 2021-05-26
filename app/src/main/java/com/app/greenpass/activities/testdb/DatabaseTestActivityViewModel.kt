@@ -17,12 +17,12 @@ class DatabaseTestActivityViewModel(application: Application): AndroidViewModel(
 
     fun initList(handler: CoroutineExceptionHandler) {
         viewModelScope.launch(handler) {
-            val list = AppDatabase.getInstance(getApplication()).DaoTest().getAllRecords()
-            val forAdapter = ArrayList<TestModel>()
-            for (t in list){
-                forAdapter.add(t.toMap())
-            }
-            latestList.value = forAdapter.toMutableList()
+            latestList.value = AppDatabase
+                .getInstance(getApplication())
+                .DaoTest()
+                .getAllRecords()
+                .map { it.toMap() }
+                .toMutableList()
         }
     }
 

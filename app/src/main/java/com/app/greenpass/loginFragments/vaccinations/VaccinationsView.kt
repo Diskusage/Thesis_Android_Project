@@ -7,12 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.app.greenpass.adapters.ClickListener
 import com.app.greenpass.adapters.GenerateQrCodeAdapter
 import com.app.greenpass.databinding.FragmentVaccinationsBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 //MVVM architecture for fragments
 //a vaccinations view, consists of layout bindings and
@@ -36,13 +32,7 @@ open class VaccinationsView : Fragment() {
                     binding.galleryText.text = resources.getString(text)
                     binding.vaccHistory.adapter = GenerateQrCodeAdapter(
                         list,
-                        object : ClickListener {
-                            override fun onPositionClicked(i: Int) {
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    vaccinationsViewModel.generateQrCode(list[i])
-                                }
-                            }
-                        }
+                        vaccinationsViewModel,
                     )
                     binding.vaccHistory.addItemDecoration(
                         DividerItemDecoration(context, DividerItemDecoration.VERTICAL)

@@ -26,19 +26,19 @@ class DatabaseTestActivity : AppCompatActivity() {
                 ViewModelProvider(this)
                 .get(DatabaseTestActivityViewModel::class.java)
         databaseTestActivityViewModel.list.observe(this, { s -> showCustomersOnList(s) })
-        GlobalScope.launch(Dispatchers.Main + handler) {
+
+        GlobalScope.launch(Dispatchers.IO + handler) {
             databaseTestActivityViewModel.initList(handler)
         }
+
         mBinding = DatabaseTestManagementScreenBinding.inflate(this.layoutInflater)
         setContentView(mBinding.root)
+
         binding.btnTestAdd.setOnClickListener {
-            val checkFields = databaseTestActivityViewModel.checkFields(
+            databaseTestActivityViewModel.checkFields(
                     binding.databaseTestIDNP.text.toString(),
                     binding.databaseTestDate.text.toString(),
-            )
-            if (checkFields != null){
-                Toast.makeText(this, checkFields, Toast.LENGTH_SHORT).show()
-            } else{
+            )?.let { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() } ?:
                 if (!databaseTestActivityViewModel.onAdd(
                                 handler,
                                 TestModel(
@@ -50,8 +50,8 @@ class DatabaseTestActivity : AppCompatActivity() {
                         )
                 ){
                     Toast.makeText(this, "Something went wrong while adding", Toast.LENGTH_SHORT).show()
-                }
-            }
+                } else { Toast.makeText(this, "Person added", Toast.LENGTH_SHORT).show() }
+
         }
     }
 

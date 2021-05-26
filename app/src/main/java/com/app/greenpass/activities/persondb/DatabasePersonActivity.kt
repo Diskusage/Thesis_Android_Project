@@ -1,6 +1,7 @@
 package com.app.greenpass.activities.persondb
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -22,17 +23,20 @@ class DatabasePersonActivity: AppCompatActivity() {
                 ViewModelProvider(this)
                         .get(DatabasePersonActivityViewModel::class.java)
         databasePersonActivityViewModel.list.observe(this, { s -> showPeopleOnList(s) })
-        GlobalScope.launch(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.IO) {
             databasePersonActivityViewModel.initList()
         }
-        mBinding = DatabasePersonBinding.inflate(this.layoutInflater)
+        mBinding = DatabasePersonBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
+
         binding.btnAdd.setOnClickListener {
             databasePersonActivityViewModel.addPerson(
                 binding.databaseFirstName.text.toString(),
                 binding.databaseSecondName.text.toString(),
                 binding.databaseCode.text.toString(),
-            )
+            ).second?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
