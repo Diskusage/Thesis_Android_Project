@@ -59,9 +59,9 @@ class MainActivity : BaseActivity() {
         }
         //quick login during debugging
         if(BuildConfig.DEBUG){
-            binding.etFirstName.text = Editable.Factory.getInstance().newEditable("d")
-            binding.etSecondName.text = Editable.Factory.getInstance().newEditable( "b")
-            binding.etIDNP.text =Editable.Factory.getInstance().newEditable( "1234567890122")
+            binding.etFirstName.text = Editable.Factory.getInstance().newEditable("Dima")
+            binding.etSecondName.text = Editable.Factory.getInstance().newEditable( "Brol")
+            binding.etIDNP.text =Editable.Factory.getInstance().newEditable( "1234567890123")
         }
     }
 
@@ -69,8 +69,7 @@ class MainActivity : BaseActivity() {
         menuInflater.inflate(R.menu.main_activity, menu)
         return true
     }
-    //TODO language in main menu
-    //TODO database data translations where possible
+
     override fun onRestart() {
         super.onRestart()
         recreate()

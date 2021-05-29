@@ -11,6 +11,7 @@ import com.app.greenpass.enums.Vaccines
 import com.app.greenpass.models.VaccinationModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import java.lang.NumberFormatException
 
 class DatabaseVaccinationViewModel (application: Application): AndroidViewModel(application)  {
     private var latestList: MutableLiveData<MutableList<VaccinationModel>> = MutableLiveData()
@@ -35,6 +36,11 @@ class DatabaseVaccinationViewModel (application: Application): AndroidViewModel(
     }
 
     fun checkFields(code: String, series: String, lab: String, vacc:String, date: String): String?{
+        try {
+            code.toInt()
+        } catch (e: NumberFormatException){
+            return "The code is invalid"
+        }
         if (
                 vacc.isEmpty() ||
                 lab.isEmpty() ||

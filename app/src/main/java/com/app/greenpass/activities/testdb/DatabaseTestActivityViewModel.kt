@@ -9,6 +9,7 @@ import com.app.greenpass.database.AppDatabase
 import com.app.greenpass.database.toMap
 import com.app.greenpass.models.TestModel
 import kotlinx.coroutines.*
+import java.lang.NumberFormatException
 
 class DatabaseTestActivityViewModel(application: Application): AndroidViewModel(application)  {
     private var latestList: MutableLiveData<MutableList<TestModel>> = MutableLiveData()
@@ -33,6 +34,11 @@ class DatabaseTestActivityViewModel(application: Application): AndroidViewModel(
     }
 
     fun checkFields(idnp: String, date: String): String?{
+        try {
+            idnp.toInt()
+        } catch (e: NumberFormatException){
+            return "The code is invalid"
+        }
         if (idnp.isEmpty() || date.isEmpty()) {
             return "Fill in all the fields"
         }
