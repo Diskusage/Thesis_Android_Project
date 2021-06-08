@@ -1,37 +1,29 @@
 package com.app.greenpass.activities.login
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
-import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.app.greenpass.R
-import com.app.greenpass.activities.locale.BaseActivity
 import com.app.greenpass.databinding.ActivityLoggedIn2ndBinding
 import com.app.greenpass.loginFragments.viewmodels.ProfileViewModel
 import com.app.greenpass.loginFragments.viewmodels.TestsViewModel
 import com.app.greenpass.loginFragments.viewmodels.VaccinationsViewModel
 import com.app.greenpass.models.PersonModel
-import com.app.greenpass.util.CoroutineHelper
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 
 //activity behind the fragments, provides navigation and passes on necessary information in a bundle
 //to the fragments.
 
-class LoggedInActivity : BaseActivity()  {
+class LoggedInActivity : AppCompatActivity()  {
     private var mAppBarConfiguration: AppBarConfiguration? = null
     private lateinit var fBinding: ActivityLoggedIn2ndBinding
     private val binding get() = fBinding
@@ -83,6 +75,12 @@ class LoggedInActivity : BaseActivity()  {
         val navController = navHostFragment.navController
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration!!)
         NavigationUI.setupWithNavController(binding.navView, navController)
+    }
+
+    override fun onBackPressed() {
+
+        super.onBackPressed()
+        this.finish()
     }
 
     override fun onResume() {
