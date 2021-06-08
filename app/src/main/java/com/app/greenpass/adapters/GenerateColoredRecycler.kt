@@ -2,14 +2,14 @@ package com.app.greenpass.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import com.app.greenpass.R
 import com.app.greenpass.databinding.ListRowQrBinding
-import com.app.greenpass.loginFragments.tests.TestsViewModel
+import com.app.greenpass.loginFragments.viewmodels.TestsViewModel
 import com.app.greenpass.models.TestModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+
 
 //an adapter to demonstrate tests/vaccinations with button option,
 //has a callback for click events, colors tests accordingly
@@ -35,11 +35,11 @@ class GenerateColoredRecycler(private val dataSet: List<TestModel> = arrayListOf
                 binding.textViewResult.setTextColor(0xBE0F9E27.toInt())
             }
             binding.rowButtonQr.setOnClickListener {
-                GlobalScope.launch(Dispatchers.Default) {
+                testsViewModel.viewModelScope.launch {
                     testsViewModel.generateQrCode(list[adapterPosition])
                 }
             }
-            binding.textViewQr.text = dataSet.toString()
+            binding.textViewQr.text = dataSet.display()
         }
     }
 

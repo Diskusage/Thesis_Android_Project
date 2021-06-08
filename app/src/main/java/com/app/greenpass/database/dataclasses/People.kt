@@ -1,4 +1,4 @@
-package com.app.greenpass.database
+package com.app.greenpass.database.dataclasses
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

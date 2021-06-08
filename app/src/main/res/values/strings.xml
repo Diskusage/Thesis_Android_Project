@@ -27,7 +27,7 @@
     <string name="RED">#D3E61405</string>
     <string name="STANDARD">#FAFAFA</string>
     <string name="delete">Delete</string>
-    <string name="generate">Generate</string>
+    <string name="generate">Get QR</string>
     <string name="qr_code_for_last_vaccination">QR code for last vaccination</string>
     <string name="qr_code_for_last_test">QR code for last test</string>
     <string name="first_name">First name:</string>
@@ -46,15 +46,17 @@
     <string name="english">English</string>
     <string name="no_vaccs">No vaccinations found</string>
     <string name="no_tests">No tests found</string>
-    <string name="vacc_details">COVID-19 VACCINATION DETAILS:\n</string>
-    <string name="test_details">COVID-19 Test details:\n</string>
-    <string name="latest_vacc_qr">Latest vaccine QR code</string>
-    <string name="latest_test_qr">Latest test QR code</string>
-    <string name="this_test">QR code for this test</string>
-    <string name="this_vacc">QR code for this vaccination</string>
+    <string name="vacc_details">Vaccination details:\n</string>
+    <string name="test_details">Test details:\n</string>
+    <string name="latest_vacc_qr">Latest vaccine QR code (%1$s)</string>
+    <string name="latest_test_qr">Latest test QR code (%1$s)</string>
+    <string name="this_test">QR code for test dated %1$s</string>
+    <string name="this_vacc">QR code for vaccination dated %1$s</string>
     <string name="tHistory">Test history</string>
     <string name="vHistory">Vaccination history</string>
     <string name="locale_lang">Language: </string>
     <string name="test_pos">Positive</string>
     <string name="test_neg">Negative</string>
+    <string name="e_mail" translatable="false">E-mail</string>
+    <string name="password">Password</string>
 </resources>

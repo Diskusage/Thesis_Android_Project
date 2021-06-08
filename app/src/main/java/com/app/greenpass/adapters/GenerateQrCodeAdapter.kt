@@ -2,9 +2,10 @@ package com.app.greenpass.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import com.app.greenpass.databinding.ListRowQrBinding
-import com.app.greenpass.loginFragments.vaccinations.VaccinationsViewModel
+import com.app.greenpass.loginFragments.viewmodels.VaccinationsViewModel
 import com.app.greenpass.models.VaccinationModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -25,9 +26,9 @@ class GenerateQrCodeAdapter(private val dataSet: List<VaccinationModel> = arrayL
         : RecyclerView.ViewHolder(binding.root){
 
         fun onBind(dataSet: VaccinationModel){
-            binding.textViewQr.text = dataSet.toString()
+            binding.textViewQr.text = dataSet.display()
             binding.rowButtonQr.setOnClickListener {
-                GlobalScope.launch(Dispatchers.Default) {
+                vaccinationsViewModel.viewModelScope.launch {
                     vaccinationsViewModel.generateQrCode(list[adapterPosition])
                 }
             }

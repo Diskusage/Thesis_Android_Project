@@ -1,3 +1,5 @@
+package com.app.greenpass.activities.locale
+
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Configuration
@@ -10,8 +12,7 @@ class ChangeLocaleTool(base: Context?) : ContextWrapper(base) {
 
         fun wrap(context: Context, language: String): ContextWrapper {
             val config = context.resources.configuration
-            var sysLocale: Locale? = null
-            sysLocale = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
+            val sysLocale: Locale = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
                 getSystemLocale(config)
             } else {
                 getSystemLocaleLegacy(config)

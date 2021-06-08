@@ -1,10 +1,11 @@
-package com.app.greenpass.database
+package com.app.greenpass.database.dataclasses
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.app.greenpass.enums.Vaccines
 import com.app.greenpass.models.VaccinationModel
+import java.util.regex.Pattern
 
 @Entity
 data class Vaccinations(
@@ -14,7 +15,23 @@ data class Vaccinations(
         @ColumnInfo(name = "VACCINATION_LAB") val labName: String,
         @ColumnInfo(name = "VACCINATION_VACCINE") val vaccineType: Int,
         @ColumnInfo(name = "VACCINATION_DATE") val vaccinationDate: String,
-)
+) : Comparable<Vaccinations> {
+        override fun compareTo(other: Vaccinations): Int {
+                val p = Pattern.compile("\\d*\$")
+                val m1 = p.matcher(vaccinationDate)
+                val m2 = p.matcher(other.vaccinationDate)
+                if (m1.find() && m2.find()){
+                        if (m1.group(0).toInt() > m2.group(0).toInt()){
+                                return 1
+                        }
+                        return if (m1.group(0).toInt() < m2.group(0).toInt()){
+                                -1
+                        } else 0
+                }
+                return 0
+        }
+
+}
 
 fun VaccinationModel.toMap() = Vaccinations(
         series = this.series,

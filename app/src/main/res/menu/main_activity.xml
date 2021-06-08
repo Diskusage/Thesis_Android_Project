@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<menu xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.main.MainActivity">
-    <item
-        android:id="@+id/action_language_main"
-        android:orderInCategory="300"
-        android:icon="@drawable/ic_baseline_language_24"
-        app:showAsAction="ifRoom"
-        android:title="@string/language" />
 </menu>

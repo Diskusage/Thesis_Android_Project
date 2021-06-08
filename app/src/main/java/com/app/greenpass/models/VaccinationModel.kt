@@ -1,5 +1,7 @@
 package com.app.greenpass.models
 
+import android.text.Spanned
+import androidx.core.text.HtmlCompat
 import com.app.greenpass.enums.Vaccines
 import java.util.*
 
@@ -15,12 +17,14 @@ class VaccinationModel(
 
 {
 
-    override fun toString(): String {
-        return "OWNER:\n $owner\n" +
-                "VACCINE TYPE:\n $type\n" +
-                "VACCINATION DATE:\n ${vaccDate.toUpperCase(Locale.ROOT)}\n" +
-                "LABORATORY:\n $lab\n" +
-                "VACCINE SERIES:\n $series"
+    fun display() : Spanned{
+        return HtmlCompat.fromHtml("OWNER:<br /> <b>$owner</b> <br />" +
+                "VACCINE TYPE:<br /> <b>$type</b><br />" +
+                "VACCINATION DATE:<br /> <b>${vaccDate}</b><br />" +
+                "LABORATORY:<br /> <b>$lab</b><br />" +
+                "VACCINE SERIES:<br /> <b>$series</b>",
+            0
+        )
     }
 
 }

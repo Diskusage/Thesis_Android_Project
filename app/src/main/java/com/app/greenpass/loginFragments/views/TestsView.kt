@@ -1,14 +1,17 @@
-package com.app.greenpass.loginFragments.tests
+package com.app.greenpass.loginFragments.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.app.greenpass.adapters.GenerateColoredRecycler
 import com.app.greenpass.databinding.FragmentTestsBinding
+import com.app.greenpass.loginFragments.viewmodels.TestsViewModel
+import kotlinx.coroutines.runBlocking
 
 //MVVM architecture for fragments
 //a tests view, consists of layout bindings and
@@ -27,6 +30,7 @@ open class TestsView : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        testsViewModel.updateView()
         testsViewModel.viewsResult.observe(
             viewLifecycleOwner,
             { s -> when(s){
@@ -38,18 +42,22 @@ open class TestsView : Fragment() {
                     )
                 }
                 is TestsViewModel.ViewResult.Generated -> s.apply {
-                    binding.desc.text = resources.getString(testText)
+                    binding.desc.text = resources.getString(testText, s.date)
                     binding.imageViewTest.setImageBitmap(testMap)
                 }
+                else -> Toast.makeText(activity, "Wrong state", Toast.LENGTH_SHORT).show()
             } }
         )
     }
 
-    override fun onResume() {
-        super.onResume()
-        testsViewModel.updateView()
-        binding.desc.text = null
-        binding.imageViewTest.setImageBitmap(null)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        runBlocking {
+//            testsViewModel.updateView()
+//            binding.desc.text = null
+//            binding.imageViewTest.setImageBitmap(null)
+//        }
+//
+//    }
 
 }

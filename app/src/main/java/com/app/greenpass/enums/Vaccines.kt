@@ -5,7 +5,7 @@ import java.util.*
 //input vaccine types here
 @Suppress("unused")
 enum class Vaccines(val t : Int) {
-    ASTROZENECA(1),
+    ASTRAZENECA(1),
     PFIZER(2),
     SPUTNIKV(3),
     NONE(-1);

@@ -1,6 +1,5 @@
 package com.app.greenpass.activities.locale
 
-import ChangeLocaleTool
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.appcompat.app.AppCompatActivity

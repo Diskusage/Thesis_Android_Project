@@ -1,14 +1,17 @@
-package com.app.greenpass.loginFragments.vaccinations
+package com.app.greenpass.loginFragments.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.app.greenpass.adapters.GenerateQrCodeAdapter
 import com.app.greenpass.databinding.FragmentVaccinationsBinding
+import com.app.greenpass.loginFragments.viewmodels.VaccinationsViewModel
+import kotlinx.coroutines.runBlocking
 
 //MVVM architecture for fragments
 //a vaccinations view, consists of layout bindings and
@@ -25,6 +28,7 @@ open class VaccinationsView : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        vaccinationsViewModel.updateView()
         vaccinationsViewModel.viewsResult.observe(
             viewLifecycleOwner,
             { s -> when(s){
@@ -39,18 +43,22 @@ open class VaccinationsView : Fragment() {
                     )
                 }
                 is VaccinationsViewModel.ViewResult.Generated -> s.apply {
-                    binding.desc.text = resources.getString(testText)
+                    binding.desc.text = resources.getString(testText, s.date)
                     binding.imageView2.setImageBitmap(testMap)
                 }
+                else -> Toast.makeText(activity, "Wrong state", Toast.LENGTH_SHORT).show()
             } }
         )
     }
 
-    override fun onResume() {
-        super.onResume()
-        vaccinationsViewModel.updateView()
-        binding.desc.text = null
-        binding.imageView2.setImageBitmap(null)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        runBlocking {
+//            vaccinationsViewModel.updateView()
+//            binding.desc.text = null
+//            binding.imageView2.setImageBitmap(null)
+//        }
+//
+//    }
 
 }

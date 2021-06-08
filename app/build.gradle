@@ -3,6 +3,7 @@ plugins {
     id "org.jetbrains.kotlin.android"
     id 'kotlin-kapt'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.5.0'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -13,9 +14,15 @@ android {
         applicationId "com.app.greenpass"
         minSdkVersion 16
         targetSdkVersion 30
+        multiDexEnabled = true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -34,6 +41,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        languageVersion = "1.5"
+    }
+
+    sourceSets {
+        // Adds exported schema location as test app assets.
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
 }
 
@@ -42,9 +55,14 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-database:20.0.0'
     def room_version = "2.3.0"
     def preference_version = "1.1.1"
 
+    implementation platform('com.google.firebase:firebase-bom:28.0.1')
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation "androidx.preference:preference-ktx:$preference_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0"
     implementation "androidx.room:room-runtime:$room_version"
@@ -61,6 +79,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'com.journeyapps:zxing-android-embedded:3.4.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.32"
+    implementation 'com.google.firebase:firebase-auth'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
