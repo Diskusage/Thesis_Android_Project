@@ -2,33 +2,39 @@ package com.app.greenpass.activities.login
 
 import android.app.Application
 import android.os.Build
-import android.os.Bundle
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.AndroidViewModel
-import com.app.greenpass.database.AppDatabase
-import com.app.greenpass.database.toMap
-import com.app.greenpass.loginFragments.profile.ProfileViewModel
-import com.app.greenpass.loginFragments.tests.TestsViewModel
-import com.app.greenpass.loginFragments.vaccinations.VaccinationsViewModel
+import androidx.lifecycle.viewModelScope
+import com.app.greenpass.database.dataclasses.toMap
+import com.app.greenpass.loginFragments.viewmodels.*
 import com.app.greenpass.models.PersonModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class LoggedInActivityViewModel(application: Application): AndroidViewModel(application) {
+class LoggedInActivityViewModel(application: Application) : BaseViewModel(application) {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     fun initFragments(
-        bundle: Bundle?,
+        user: PersonModel,
         fViewModel: ProfileViewModel,
         sViewModel: VaccinationsViewModel,
         lViewModel: TestsViewModel
     ) {
-        bundle?.getInt("user")?.let {
-            fViewModel.getKey(it)
-            sViewModel.getKey(it)
-            lViewModel.getKey(it)
+        viewModelScope.launch(Dispatchers.Main) {
+            fViewModel.updateView(user)
+            sViewModel.getKey(user)
+            lViewModel.getKey(user)
         }
     }
 
-    fun fetchPerson(code: Int?): PersonModel?{
-        return code?.let { AppDatabase.getInstance(getApplication()).DaoPerson().getPerson(it).toMap() }
+    fun fetchPerson(code: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val data = fireDb.daoPerson().getPerson(code)?.toMap()
+            viewResult.postValue(ViewResult.Downloaded(data))
+        }
     }
 
+    sealed class ViewResult : State {
+        class Downloaded(
+            val person: PersonModel?,
+        ) : ViewResult()
+    }
 }

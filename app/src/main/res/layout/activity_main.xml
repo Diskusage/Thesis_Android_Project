@@ -41,6 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/et_firstName" />
 
     <EditText
+        android:autofillHints=""
         android:id="@+id/et_IDNP"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -64,41 +65,9 @@
         android:text="@string/LoginBtn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_IDNP"
-        app:layout_constraintVertical_bias="0.249" />
-
-    <Button
-        android:id="@+id/btn_toDB"
-        android:layout_width="150dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/GoToDatabase"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_to_people" />
-
-    <Button
-        android:id="@+id/btn_to_test_db"
-        android:layout_width="150dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/ToTests"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_toDB" />
-
-    <Button
-        android:id="@+id/btn_to_people"
-        android:layout_width="150dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/to_person_database"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+        app:layout_constraintTop_toBottomOf="@+id/et_IDNP"
+        app:layout_constraintVertical_bias="0.441" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,15 +1,8 @@
 package com.app.greenpass.models
 
-import java.util.*
 import kotlin.math.absoluteValue
 
-class PersonModel(var firstName: String, var secondName: String, var iDNP: String){
-
-    override fun toString(): String {
-        return this.firstName.toUpperCase(Locale.ROOT) + " " +
-                this.secondName.toUpperCase(Locale.ROOT) + " " +
-                this.hashCode()
-    }
+class PersonModel(var firstName: String, var secondName: String, var iDNP: String) {
 
     override fun hashCode(): Int {
         return (firstName + secondName + iDNP).hashCode().absoluteValue
