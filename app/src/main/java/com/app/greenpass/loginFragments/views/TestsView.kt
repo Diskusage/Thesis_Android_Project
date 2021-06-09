@@ -17,13 +17,15 @@ import kotlinx.coroutines.runBlocking
 //a tests view, consists of layout bindings and
 //listeners for user interaction
 open class TestsView : Fragment() {
-    private lateinit var mBinding : FragmentTestsBinding
+    private lateinit var mBinding: FragmentTestsBinding
     private val binding get() = mBinding
     var idnp: String? = null
     private val testsViewModel: TestsViewModel by activityViewModels()
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         mBinding = FragmentTestsBinding.inflate(inflater)
         return binding.root
 
@@ -33,31 +35,22 @@ open class TestsView : Fragment() {
         testsViewModel.updateView()
         testsViewModel.viewsResult.observe(
             viewLifecycleOwner,
-            { s -> when(s){
-                is TestsViewModel.ViewResult.Opened -> s.apply {
-                    binding.testsText.text = resources.getString(text)
-                    binding.testsHistory.adapter = GenerateColoredRecycler(list, testsViewModel)
-                    binding.testsHistory.addItemDecoration(
-                        DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-                    )
+            { s ->
+                when (s) {
+                    is TestsViewModel.ViewResult.Opened -> s.apply {
+                        binding.testsText.text = resources.getString(text)
+                        binding.testsHistory.adapter = GenerateColoredRecycler(list, testsViewModel)
+                        binding.testsHistory.addItemDecoration(
+                            DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+                        )
+                    }
+                    is TestsViewModel.ViewResult.Generated -> s.apply {
+                        binding.desc.text = resources.getString(testText, s.date)
+                        binding.imageViewTest.setImageBitmap(testMap)
+                    }
+                    else -> Toast.makeText(activity, "Wrong state", Toast.LENGTH_SHORT).show()
                 }
-                is TestsViewModel.ViewResult.Generated -> s.apply {
-                    binding.desc.text = resources.getString(testText, s.date)
-                    binding.imageViewTest.setImageBitmap(testMap)
-                }
-                else -> Toast.makeText(activity, "Wrong state", Toast.LENGTH_SHORT).show()
-            } }
+            }
         )
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        runBlocking {
-//            testsViewModel.updateView()
-//            binding.desc.text = null
-//            binding.imageViewTest.setImageBitmap(null)
-//        }
-//
-//    }
-
 }

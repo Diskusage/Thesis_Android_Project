@@ -13,19 +13,23 @@ import kotlinx.coroutines.launch
 
 //an adapter to demonstrate tests/vaccinations with button option,
 //has a callback for click events
-class GenerateQrCodeAdapter(private val dataSet: List<VaccinationModel> = arrayListOf(), private val vaccinationsViewModel: VaccinationsViewModel) :
-        RecyclerView.Adapter<GenerateQrCodeAdapter.ViewHolder>()  {
+class GenerateQrCodeAdapter(
+    private val dataSet: List<VaccinationModel> = arrayListOf(),
+    private val vaccinationsViewModel: VaccinationsViewModel
+) :
+    RecyclerView.Adapter<GenerateQrCodeAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
-    class ViewHolder(private val binding: ListRowQrBinding,
-                     private val vaccinationsViewModel: VaccinationsViewModel,
-                     private val list: List<VaccinationModel>)
-        : RecyclerView.ViewHolder(binding.root){
+    class ViewHolder(
+        private val binding: ListRowQrBinding,
+        private val vaccinationsViewModel: VaccinationsViewModel,
+        private val list: List<VaccinationModel>
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun onBind(dataSet: VaccinationModel){
+        fun onBind(dataSet: VaccinationModel) {
             binding.textViewQr.text = dataSet.display()
             binding.rowButtonQr.setOnClickListener {
                 vaccinationsViewModel.viewModelScope.launch {
@@ -39,7 +43,11 @@ class GenerateQrCodeAdapter(private val dataSet: List<VaccinationModel> = arrayL
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val inflater = LayoutInflater.from(viewGroup.context)
-        return ViewHolder(ListRowQrBinding.inflate(inflater, viewGroup, false), vaccinationsViewModel, dataSet)
+        return ViewHolder(
+            ListRowQrBinding.inflate(inflater, viewGroup, false),
+            vaccinationsViewModel,
+            dataSet
+        )
     }
 
     // Replace the contents of a view (invoked by the layout manager)

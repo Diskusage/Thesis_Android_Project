@@ -14,13 +14,13 @@ import kotlin.coroutines.resumeWithException
 class DaoFireStoreVaccination(private val db: FirebaseFirestore) {
 
     suspend fun getRecordsForPerson(idnp: Int): List<Vaccinations>? {
-        var ok : ArrayList<Vaccinations>? = null
+        var ok: ArrayList<Vaccinations>? = null
         val data = db.collection("vaccinations").get().await()
         if (data != null) {
             ok = ArrayList()
-            for (user in data){
+            for (user in data) {
                 user["owner"]?.let {
-                    if (it == idnp.toLong()){
+                    if (it == idnp.toLong()) {
                         ok.add(
                             Vaccinations(
                                 personCode = user["owner"].toString().toInt(),
@@ -48,7 +48,8 @@ class DaoFireStoreVaccination(private val db: FirebaseFirestore) {
             return if (e == null) {
                 if (isCanceled) {
                     throw CancellationException(
-                        "Task $this was cancelled normally.")
+                        "Task $this was cancelled normally."
+                    )
                 } else {
                     result
                 }

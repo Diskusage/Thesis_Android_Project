@@ -9,12 +9,12 @@ import kotlin.coroutines.resumeWithException
 
 class DaoFireStorePerson(private val db: FirebaseFirestore) {
 
-    suspend fun getPerson(code: Int): People?{
-        var ok : People? = null
+    suspend fun getPerson(code: Int): People? {
+        var ok: People? = null
         val data = db.collection("users").get().await()
-        if (data != null){
-            for (user in data){
-                if (user["code"] == code.toLong()){
+        if (data != null) {
+            for (user in data) {
+                if (user["code"] == code.toLong()) {
                     ok = People(
                         user["name"] as String,
                         user["lastname"] as String,
@@ -25,28 +25,6 @@ class DaoFireStorePerson(private val db: FirebaseFirestore) {
             }
         }
         return ok
-//                .addOnSuccessListener { result ->
-//                    for (user in result){
-//                        user["code"]?.let {
-//                            if (it == code.toLong()){
-//                                ok = People(
-//                                    user["name"] as String,
-//                                    user["lastname"] as String,
-//                                    user["idnp"].toString(),
-//                                    user["code"].toString().toInt()
-//                                )
-//                                flag = false
-//                                return@addOnSuccessListener
-//                            }
-//                        }
-//                    }
-//                    flag = false
-//                }
-//                .addOnFailureListener { result ->
-//                    Log.d(TAG, "Didn't get collection $result")
-//                    flag = false
-//                }
-
     }
 
     suspend fun <T> Task<T>.await(): T? {
@@ -55,7 +33,8 @@ class DaoFireStorePerson(private val db: FirebaseFirestore) {
             return if (e == null) {
                 if (isCanceled) {
                     throw CancellationException(
-                        "Task $this was cancelled normally.")
+                        "Task $this was cancelled normally."
+                    )
                 } else {
                     result
                 }

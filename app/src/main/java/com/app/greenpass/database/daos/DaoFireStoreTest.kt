@@ -9,7 +9,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.coroutines.resumeWithException
 
-class DaoFireStoreTest(private val db : FirebaseFirestore)  {
+class DaoFireStoreTest(private val db: FirebaseFirestore) {
 
 
     suspend fun getLastTestForPerson(idnp: Int): Tests? {
@@ -17,21 +17,23 @@ class DaoFireStoreTest(private val db : FirebaseFirestore)  {
     }
 
     suspend fun getAllTestForPerson(idnp: Int): List<Tests>? {
-        var ok : ArrayList<Tests>? = null
+        var ok: ArrayList<Tests>? = null
         val data = db.collection("tests").get().await()
         if (data != null) {
             ok = ArrayList()
-            for (user in data){
+            for (user in data) {
                 user["owner"]?.let {
-                        if (it == idnp.toLong()){
-                            ok.add(Tests(
+                    if (it == idnp.toLong()) {
+                        ok.add(
+                            Tests(
                                 personCode = user["owner"].toString().toInt(),
                                 testDate = user["date"] as String,
                                 testResult = user["result"] as Boolean,
                                 antibodies = user["antibodies"] as Boolean
-                            ))
-                        }
+                            )
+                        )
                     }
+                }
             }
             ok.sort()
         }
@@ -44,7 +46,8 @@ class DaoFireStoreTest(private val db : FirebaseFirestore)  {
             return if (e == null) {
                 if (isCanceled) {
                     throw CancellationException(
-                        "Task $this was cancelled normally.")
+                        "Task $this was cancelled normally."
+                    )
                 } else {
                     result
                 }

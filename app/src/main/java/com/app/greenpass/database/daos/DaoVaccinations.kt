@@ -5,7 +5,7 @@ import androidx.room.Query
 import com.app.greenpass.database.dataclasses.Vaccinations
 
 @Dao
-interface DaoVaccinations  {
+interface DaoVaccinations {
     @Query("SELECT * FROM vaccinations WHERE PERSON_CODE = :idnp")
     fun getRecordsForPerson(idnp: Int): List<Vaccinations>
 

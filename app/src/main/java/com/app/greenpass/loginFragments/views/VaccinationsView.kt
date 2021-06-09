@@ -18,11 +18,13 @@ import kotlinx.coroutines.runBlocking
 //listeners for user interaction
 open class VaccinationsView : Fragment() {
     private val vaccinationsViewModel: VaccinationsViewModel by activityViewModels()
-    private lateinit var mBinding : FragmentVaccinationsBinding
+    private lateinit var mBinding: FragmentVaccinationsBinding
     private val binding get() = mBinding
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         mBinding = FragmentVaccinationsBinding.inflate(inflater)
         return binding.root
     }
@@ -31,34 +33,25 @@ open class VaccinationsView : Fragment() {
         vaccinationsViewModel.updateView()
         vaccinationsViewModel.viewsResult.observe(
             viewLifecycleOwner,
-            { s -> when(s){
-                is VaccinationsViewModel.ViewResult.Opened -> s.apply {
-                    binding.galleryText.text = resources.getString(text)
-                    binding.vaccHistory.adapter = GenerateQrCodeAdapter(
-                        list,
-                        vaccinationsViewModel,
-                    )
-                    binding.vaccHistory.addItemDecoration(
-                        DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-                    )
+            { s ->
+                when (s) {
+                    is VaccinationsViewModel.ViewResult.Opened -> s.apply {
+                        binding.galleryText.text = resources.getString(text)
+                        binding.vaccHistory.adapter = GenerateQrCodeAdapter(
+                            list,
+                            vaccinationsViewModel,
+                        )
+                        binding.vaccHistory.addItemDecoration(
+                            DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+                        )
+                    }
+                    is VaccinationsViewModel.ViewResult.Generated -> s.apply {
+                        binding.desc.text = resources.getString(testText, s.date)
+                        binding.imageView2.setImageBitmap(testMap)
+                    }
+                    else -> Toast.makeText(activity, "Wrong state", Toast.LENGTH_SHORT).show()
                 }
-                is VaccinationsViewModel.ViewResult.Generated -> s.apply {
-                    binding.desc.text = resources.getString(testText, s.date)
-                    binding.imageView2.setImageBitmap(testMap)
-                }
-                else -> Toast.makeText(activity, "Wrong state", Toast.LENGTH_SHORT).show()
-            } }
+            }
         )
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        runBlocking {
-//            vaccinationsViewModel.updateView()
-//            binding.desc.text = null
-//            binding.imageView2.setImageBitmap(null)
-//        }
-//
-//    }
-
 }

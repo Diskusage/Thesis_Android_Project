@@ -23,7 +23,7 @@ import com.app.greenpass.models.PersonModel
 //activity behind the fragments, provides navigation and passes on necessary information in a bundle
 //to the fragments.
 
-class LoggedInActivity : AppCompatActivity()  {
+class LoggedInActivity : AppCompatActivity() {
     private var mAppBarConfiguration: AppBarConfiguration? = null
     private lateinit var fBinding: ActivityLoggedIn2ndBinding
     private val binding get() = fBinding
@@ -32,14 +32,15 @@ class LoggedInActivity : AppCompatActivity()  {
     private lateinit var vaccinationsViewModel: VaccinationsViewModel
     private lateinit var testsViewModel: TestsViewModel
     private lateinit var starterIntent: Intent
-    private var user : PersonModel? = null
+    private var user: PersonModel? = null
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         starterIntent = intent
         fBinding = ActivityLoggedIn2ndBinding.inflate(this.layoutInflater)
-        loggedInActivityViewModel = ViewModelProvider(this).get(LoggedInActivityViewModel::class.java)
+        loggedInActivityViewModel =
+            ViewModelProvider(this).get(LoggedInActivityViewModel::class.java)
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
         vaccinationsViewModel = ViewModelProvider(this).get(VaccinationsViewModel::class.java)
         testsViewModel = ViewModelProvider(this).get(TestsViewModel::class.java)
@@ -50,37 +51,37 @@ class LoggedInActivity : AppCompatActivity()  {
         }
         loggedInActivityViewModel.viewsResult.observe(
             this@LoggedInActivity,
-            { s -> when (s){
-                is LoggedInActivityViewModel.ViewResult.Downloaded -> s.person?.apply {
-                    user = s.person
-                    fBinding.navView.getHeaderView(0).findViewById<TextView>(R.id.text_title).text =
-                        getString(R.string.nav_header_title, user?.firstName, user?.secondName)
-                    fBinding.navView.getHeaderView(0).findViewById<TextView>(R.id.text_subtitle).text =
-                        user?.iDNP
-                    loggedInActivityViewModel.initFragments(
-                        this,
-                        profileViewModel,
-                        vaccinationsViewModel,
-                        testsViewModel,
-                    )
+            { s ->
+                when (s) {
+                    is LoggedInActivityViewModel.ViewResult.Downloaded -> s.person?.apply {
+                        user = s.person
+                        fBinding.navView.getHeaderView(0)
+                            .findViewById<TextView>(R.id.text_title).text =
+                            getString(R.string.nav_header_title, user?.firstName, user?.secondName)
+                        fBinding.navView.getHeaderView(0)
+                            .findViewById<TextView>(R.id.text_subtitle).text =
+                            user?.iDNP
+                        loggedInActivityViewModel.initFragments(
+                            this,
+                            profileViewModel,
+                            vaccinationsViewModel,
+                            testsViewModel,
+                        )
+                    }
                 }
-            } }
+            }
         )
         setSupportActionBar(binding.appBarLogin.toolbar)
         mAppBarConfiguration = AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_tests, R.id.nav_gallery)
-                .setDrawerLayout(binding.drawerLayout)
-                .build()
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            R.id.nav_home, R.id.nav_tests, R.id.nav_gallery
+        )
+            .setDrawerLayout(binding.drawerLayout)
+            .build()
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration!!)
         NavigationUI.setupWithNavController(binding.navView, navController)
-    }
-
-    override fun onBackPressed() {
-
-        super.onBackPressed()
-        this.finish()
     }
 
     override fun onResume() {
@@ -99,44 +100,4 @@ class LoggedInActivity : AppCompatActivity()  {
         return (NavigationUI.navigateUp(navController, mAppBarConfiguration!!)
                 || super.onSupportNavigateUp())
     }
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        if (item.itemId == R.id.action_language){
-//            val popup = PopupMenu(this, findViewById(R.id.action_language))
-//            popup.setOnMenuItemClickListener (this)
-//            popup.inflate(R.menu.language_choose)
-//            popup.show()
-//            return true
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
-
-
-//    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-//    override fun onMenuItemClick(item: MenuItem?): Boolean {
-//        return when(item?.itemId){
-//            R.id.lang_en -> let {
-//                val pref = applicationContext.getSharedPreferences("MyPref", MODE_PRIVATE)
-//                val editor: SharedPreferences.Editor = pref.edit()
-//                editor.putString("lang_code", "en") // Saving string
-//                editor.apply()
-//                reload()
-//                true
-//            }
-//            R.id.lang_ru -> let{
-//                val pref = applicationContext.getSharedPreferences("MyPref", MODE_PRIVATE)
-//                val editor: SharedPreferences.Editor = pref.edit()
-//                editor.putString("lang_code", "ru") // Saving string
-//                editor.apply()
-//                reload()
-//                true
-//            }
-//            else -> false
-//        }
-//    }
-//
-//    private fun reload(){
-//        finish()
-//        startActivity(starterIntent)
-//    }
-
 }

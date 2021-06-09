@@ -10,7 +10,7 @@ import com.app.greenpass.models.PersonModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LoggedInActivityViewModel(application: Application): BaseViewModel(application) {
+class LoggedInActivityViewModel(application: Application) : BaseViewModel(application) {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     fun initFragments(
         user: PersonModel,
@@ -25,7 +25,7 @@ class LoggedInActivityViewModel(application: Application): BaseViewModel(applica
         }
     }
 
-     fun fetchPerson(code: Int){
+    fun fetchPerson(code: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val data = fireDb.daoPerson().getPerson(code)?.toMap()
             viewResult.postValue(ViewResult.Downloaded(data))

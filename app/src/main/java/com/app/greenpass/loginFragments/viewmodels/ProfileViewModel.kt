@@ -13,6 +13,7 @@ import com.google.zxing.MultiFormatWriter
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.lang.IndexOutOfBoundsException
 
 //MVVM architecture for fragments
 //functions, processes and interactions with model
@@ -20,15 +21,6 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 class ProfileViewModel(application: Application) : BaseViewModel(application) {
     var lastState: State? = null
-//    suspend fun getKey(user: Int) {
-//        viewModelScope.async(Dispatchers.IO) {
-//            person = fireDb.daoPerson().getPerson(key)?.toMap()
-//            withContext(Dispatchers.Main) {
-//                person?.let { updateView(it) }
-//            }
-//        }
-////            AppDatabase.getInstance(getApplication()).daoPerson().getPerson(key)!!.toMap()
-//    }
 
     fun updateView(person: PersonModel) {
         this.person = person
@@ -37,7 +29,7 @@ class ProfileViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun generateQrCodes(state: ViewResult.Authorized) {
-        viewModelScope.launch {
+        viewModelScope.launch(helper.handler) {
             val jobOne = async {
 //                AppDatabase.getInstance(getApplication()).daoTest().getLastTestForPerson(person.hashCode())?.toMap()
                 val toRet = fireDb.daoTest().getLastTestForPerson(person.hashCode())?.toMap()
@@ -49,20 +41,24 @@ class ProfileViewModel(application: Application) : BaseViewModel(application) {
             }
             val testQr: String? = if (jobTwo.await() != null)
                 getApplication<Application>().resources.getString(R.string.vacc_details) +
-                        jobTwo.await().toString()
+                        jobTwo.await()?.display()
             else null
             val secondQr: String? = if (jobOne.await() != null)
                 getApplication<Application>().resources.getString(R.string.test_details) +
-                        jobOne.await().toString()
+                        jobOne.await()?.display()
             else null
             val writer = MultiFormatWriter()
             val bce = BarcodeEncoder()
-            val stateFirst = secondQr?.let { ViewResult.LoadedFirst(
-                bce.createBitmap(writer.encode(secondQr, BarcodeFormat.QR_CODE, 300, 300))
-            )  }
-            val stateSecond = testQr?.let { ViewResult.LoadedSecond(
-                bce.createBitmap(writer.encode(testQr, BarcodeFormat.QR_CODE, 300, 300))
-            ) }
+            val stateFirst = secondQr?.let {
+                ViewResult.LoadedFirst(
+                    bce.createBitmap(writer.encode(secondQr, BarcodeFormat.QR_CODE, 300, 300))
+                )
+            }
+            val stateSecond = testQr?.let {
+                ViewResult.LoadedSecond(
+                    bce.createBitmap(writer.encode(testQr, BarcodeFormat.QR_CODE, 300, 300))
+                )
+            }
             val finalState = ViewResult.FinishLoad(
                 Pair(stateFirst, stateSecond),
                 state,

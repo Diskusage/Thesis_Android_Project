@@ -18,50 +18,45 @@ import kotlinx.coroutines.launch
 //to transfer data back to view
 class VaccinationsViewModel(application: Application) : BaseViewModel(application) {
 
-    fun getKey(key : PersonModel){
+    fun getKey(key: PersonModel) {
         person = key
     }
-    fun updateView(){
-        viewModelScope.launch {
-            viewResult.postValue(fireDb
-                .daoVaccinations()
-                .getRecordsForPerson(person.hashCode())?.let { it ->
-                    ViewResult.Opened(
-                        R.string.vHistory,
-                        it
-                            .map { it.toMap() }
-                    )
-                })
+
+    fun updateView() {
+        viewModelScope.launch(helper.handler) {
+            val get = fireDb.daoVaccinations().getRecordsForPerson(person.hashCode())
+            viewResult.postValue(get?.let { it ->
+                ViewResult.Opened(
+                    R.string.vHistory,
+                    it.map { it.toMap() })
+            })
         }
     }
 
-    fun generateQrCode(vaccination: VaccinationModel){
-        viewModelScope.launch {
+    fun generateQrCode(vaccination: VaccinationModel) {
+        viewModelScope.launch(helper.handler) {
             val qrCode = getApplication<Application>().resources.getString(R.string.vacc_details) +
                     vaccination.display()
-            try{
-                val writer = MultiFormatWriter()
-                val bce = BarcodeEncoder()
-                viewResult.postValue(
-                    ViewResult.Generated(
-                        R.string.this_vacc,
-                        bce.createBitmap(writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500)),
-                        vaccination.vaccDate
-                    )
+            val writer = MultiFormatWriter()
+            val bce = BarcodeEncoder()
+            viewResult.postValue(
+                ViewResult.Generated(
+                    R.string.this_vacc,
+                    bce.createBitmap(writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500)),
+                    vaccination.vaccDate
                 )
-            } catch (e: WriterException){
-                e.printStackTrace()
-            }
+            )
         }
     }
 
     sealed class ViewResult : State {
-        class  Generated(
+        class Generated(
             val testText: Int,
             val testMap: Bitmap?,
             val date: String
         ) : ViewResult()
-        class  Opened(
+
+        class Opened(
             val text: Int,
             val list: List<VaccinationModel>,
         ) : ViewResult()

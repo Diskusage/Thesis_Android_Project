@@ -19,48 +19,44 @@ import kotlinx.coroutines.launch
 
 class TestsViewModel(application: Application) : BaseViewModel(application) {
 
-    fun getKey(key: PersonModel){
+    fun getKey(key: PersonModel) {
         person = key
     }
-    fun updateView(){
-        viewModelScope.launch {
-            viewResult.postValue(fireDb
-                .daoTest()
-                .getAllTestForPerson(person.hashCode())?.let { it ->
-                    ViewResult.Opened(
-                        R.string.tHistory,
-                        it
-                            .map { it.toMap() }
-                    )
-                })
+
+    fun updateView() {
+        viewModelScope.launch(helper.handler) {
+            val get = fireDb.daoTest().getAllTestForPerson(person.hashCode())
+            viewResult.postValue(
+                get?.let { it -> ViewResult.Opened(R.string.tHistory, it.map { it.toMap() }) }
+            )
         }
     }
+
     fun generateQrCode(clickedTest: TestModel) {
-        viewModelScope.launch {
+        viewModelScope.launch(helper.handler) {
             val testQr = getApplication<Application>().resources.getString(R.string.test_details) +
                     clickedTest.display()
-            try {
-                val writer = MultiFormatWriter()
-                val bce = BarcodeEncoder()
-                viewResult.postValue(
-                    ViewResult.Generated(
-                        R.string.this_test,
-                        bce.createBitmap(writer.encode(testQr, BarcodeFormat.QR_CODE, 350, 350)),
-                        clickedTest.testDate
-                    )
+            val writer = MultiFormatWriter()
+            val bce = BarcodeEncoder()
+            viewResult.postValue(
+                ViewResult.Generated(
+                    R.string.this_test,
+                    bce.createBitmap(writer.encode(testQr, BarcodeFormat.QR_CODE, 350, 350)),
+                    clickedTest.testDate
                 )
-            } catch (e: WriterException){
-                e.printStackTrace()
-            }
+            )
+
         }
     }
-    sealed class ViewResult : State{
-        class  Generated(
+
+    sealed class ViewResult : State {
+        class Generated(
             val testText: Int,
             val testMap: Bitmap?,
             val date: String
         ) : ViewResult()
-        class  Opened(
+
+        class Opened(
             val text: Int,
             val list: List<TestModel>,
         ) : ViewResult()

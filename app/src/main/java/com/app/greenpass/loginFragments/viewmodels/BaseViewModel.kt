@@ -16,11 +16,13 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application) {
     protected var person: PersonModel? = null
-    protected val viewResult : MutableLiveData<State> = MutableLiveData()
+    protected val viewResult: MutableLiveData<State> = MutableLiveData()
     protected val fireStorage: FirebaseFirestore = FirebaseFirestore.getInstance()
     protected val helper = CoroutineHelper(application)
-    protected val fireDb : FirebaseStorage = DatabaseFactory.getDatabase(Bases.Firebase, application) as FirebaseStorage
-    protected val roomDb : AppDatabase = DatabaseFactory.getDatabase(Bases.Room, application) as AppDatabase
-    val viewsResult : LiveData<State>
+    protected val fireDb: FirebaseStorage =
+        DatabaseFactory.getDatabase(Bases.Firebase, application) as FirebaseStorage
+    protected val roomDb: AppDatabase =
+        DatabaseFactory.getDatabase(Bases.Room, application) as AppDatabase
+    val viewsResult: LiveData<State>
         get() = viewResult
 }
