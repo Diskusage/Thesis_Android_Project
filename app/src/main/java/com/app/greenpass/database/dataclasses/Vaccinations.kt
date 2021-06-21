@@ -15,7 +15,7 @@ data class Vaccinations(
     @ColumnInfo(name = "VACCINATION_LAB") val labName: String,
     @ColumnInfo(name = "VACCINATION_VACCINE") val vaccineType: Int,
     @ColumnInfo(name = "VACCINATION_DATE") val vaccinationDate: String,
-) : Comparable<Vaccinations> {
+) : Comparable<Vaccinations>, Subject {
     override fun compareTo(other: Vaccinations): Int {
         val p = Pattern.compile("\\d*\$")
         val m1 = p.matcher(vaccinationDate)

@@ -6,14 +6,14 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.app.greenpass.R
-import com.app.greenpass.database.dataclasses.toMap
+import com.app.greenpass.database.daos.DaoTest
+import com.app.greenpass.database.dataclasses.*
 import com.app.greenpass.models.PersonModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.lang.IndexOutOfBoundsException
 
 //MVVM architecture for fragments
 //functions, processes and interactions with model
@@ -31,12 +31,20 @@ class ProfileViewModel(application: Application) : BaseViewModel(application) {
     private fun generateQrCodes(state: ViewResult.Authorized) {
         viewModelScope.launch(helper.handler) {
             val jobOne = async {
-//                AppDatabase.getInstance(getApplication()).daoTest().getLastTestForPerson(person.hashCode())?.toMap()
-                val toRet = fireDb.daoTest().getLastTestForPerson(person.hashCode())?.toMap()
+                val toRet = roomDb.DaoTest().getLastTestForPerson(person.hashCode())?.toMap() ?: let {
+                    val toSave = fireDb.daoTest().getLastTestForPerson(person.hashCode())?.toMap()
+                    toSave?.let { roomDb.DaoTest().saveTest(it.toMap()) }
+                    toSave
+                }
                 toRet
             }
             val jobTwo = async {
-                val toRet = fireDb.daoVaccinations().getLastVaccination(person.hashCode())?.toMap()
+                val toRet = roomDb.DaoVaccinations().getLastVaccination(person.hashCode())?.toMap() ?: let {
+                    val toSave = fireDb.daoVaccinations().getLastVaccination(person.hashCode())?.toMap()
+                    toSave?.let { roomDb.DaoVaccinations().saveVaccination(it.toMap()) }
+                    toSave
+                }
+
                 toRet
             }
             val testQr: String? = if (jobTwo.await() != null)

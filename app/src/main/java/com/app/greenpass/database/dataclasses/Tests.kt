@@ -14,7 +14,7 @@ data class Tests(
     @ColumnInfo(name = "TEST_DATE") val testDate: String,
     @ColumnInfo(name = "TEST_RESULT") val testResult: Boolean,
     @ColumnInfo(name = "ANTIBODIES") val antibodies: Boolean,
-) : Comparable<Tests> {
+) : Comparable<Tests>, Subject {
     override fun compareTo(other: Tests): Int {
         val p = Pattern.compile("\\d*\$")
         val m1 = p.matcher(testDate)

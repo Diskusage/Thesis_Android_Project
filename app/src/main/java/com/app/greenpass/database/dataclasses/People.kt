@@ -11,7 +11,7 @@ data class People(
     @ColumnInfo(name = "SECOND_NAME") val sName: String,
     @ColumnInfo(name = "IDNP") val idnp: String,
     @PrimaryKey(autoGenerate = false) val personCode: Int,
-)
+) : Subject
 
 fun PersonModel.toMap() = People(
     fName = this.firstName,
@@ -24,7 +24,6 @@ fun People.toMap() = PersonModel(
     firstName = this.fName,
     secondName = this.sName,
     iDNP = this.idnp,
-
     )
 
 
